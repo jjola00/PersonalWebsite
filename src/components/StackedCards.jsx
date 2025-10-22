@@ -263,7 +263,7 @@ const StackedCards = ({
               disabled={isAnimating}
               className="
                 absolute -left-16 top-1/2 -translate-y-1/2 z-20
-                sm:-left-16 left-2 sm:top-1/2 top-4
+                sm:-left-16 left-12 sm:top-1/2 top-34
                 w-12 h-12 text-white flex items-center justify-center
                 bg-black/40 hover:bg-yellow-400 hover:text-black
                 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed
@@ -283,6 +283,7 @@ const StackedCards = ({
               disabled={isAnimating}
               className="
                 absolute -right-16 top-1/2 -translate-y-1/2 z-20
+                sm:-right-16 right-12 sm:top-1/2 top-34
                 w-12 h-12 text-white flex items-center justify-center
                 bg-black/40 hover:bg-yellow-400 hover:text-black
                 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed
@@ -301,7 +302,7 @@ const StackedCards = ({
 
       {/* Current Movie Info */}
       {items.length > 0 && (
-        <div className="text-center mt-2 flex flex-col items-center">
+        <div className="text-center mt-10 sm:mt-2 flex flex-col items-center">
           <h4 className={`text-white font-semibold truncate max-w-[300px] mx-auto text-center ${titleSize === 'large' ? 'text-xl sm:text-2xl lg:text-3xl' :
             titleSize === 'medium' ? 'text-lg sm:text-xl lg:text-2xl' :
               'text-sm sm:text-base lg:text-lg'
