@@ -1,0 +1,50 @@
+[
+  {
+    "id": "favourites-ordered-ish",
+    "name": "favourites (ordered) (ish)",
+    "tags": ["top 25", "profile", "topstats"],
+    "url": "https://boxd.it/BGVb4",
+    "description": "",
+    "date": "2024-12-29"
+  },
+  {
+    "id": "marvel-ranked",
+    "name": "Marvel: Ranked",
+    "tags": [],
+    "url": "https://boxd.it/EUX66",
+    "description": "Ranking all marvel movies",
+    "date": "2025-03-09"
+  },
+  {
+    "id": "ranked-best-of-23",
+    "name": "Ranked: Best of '23",
+    "tags": ["top2023"],
+    "url": "https://boxd.it/DFyk4",
+    "description": "Ranking films I watched in 2023",
+    "date": "2025-02-01"
+  },
+  {
+    "id": "ranked-best-of-24",
+    "name": "Ranked: Best of '24",
+    "tags": ["top2024"],
+    "url": "https://boxd.it/BPffG",
+    "description": "Ranking movies I watched in 2024",
+    "date": "2024-12-31"
+  },
+  {
+    "id": "ranked-best-of-25",
+    "name": "Ranked: Best of '25",
+    "tags": [],
+    "url": "https://boxd.it/DuUUm",
+    "description": "Ranking movies ive watched so far in 2025",
+    "date": "2025-01-27"
+  },
+  {
+    "id": "ranked-harry-potter",
+    "name": "Ranked: Harry Potter",
+    "tags": [],
+    "url": "https://boxd.it/CRJlW",
+    "description": "Ranking all Harry Potter movies",
+    "date": "2025-01-14"
+  }
+]

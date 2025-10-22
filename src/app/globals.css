@@ -1,0 +1,467 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 27 27 27;
+    --foreground: 225 225 225;
+    --muted: 115 115 115;
+    --accent: 254 254 91;
+    /* hex value of rgb(254,254,91) color is  #FEFE5B  */
+  }
+}
+
+@layer utilities {
+  /* Phase 1: Responsive Foundation */
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  /* Responsive font sizes */
+  @media (max-width: 768px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    html {
+      font-size: 12px;
+    }
+  }
+
+  /* Ensure body fills viewport properly */
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .pause {
+    animation-play-state: paused;
+  }
+
+  /* Custom scrollbar styles */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(254, 254, 91, 0.5);
+    border-radius: 2px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(254, 254, 91, 0.7);
+  }
+
+  .custom-bg {
+    @apply bg-background/25 border border-white/30 border-solid backdrop-blur-[6px] shadow-glass-inset hover:shadow-glass-sm;
+  }
+
+  /* Phase 2: Responsive Grid System */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 0.5rem;
+    }
+  }
+
+  /* Responsive grid */
+  .responsive-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  @media (max-width: 768px) {
+    .responsive-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .responsive-grid {
+      gap: 0.75rem;
+    }
+  }
+
+  /* Flexible layouts */
+  .flex-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .flex-responsive {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
+  /* Responsive text utilities */
+  .text-responsive-xl {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    line-height: 1.2;
+  }
+
+  .text-responsive-lg {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    line-height: 1.3;
+  }
+
+  .text-responsive-md {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    line-height: 1.4;
+  }
+
+  .text-responsive-sm {
+    font-size: clamp(0.875rem, 2vw, 1.125rem);
+    line-height: 1.5;
+  }
+
+  /* Phase 4: Responsive Images & Media */
+  .responsive-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .responsive-video {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .aspect-ratio-16-9 {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  }
+
+  .aspect-ratio-16-9 > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .aspect-ratio-4-3 {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 75%; /* 4:3 aspect ratio */
+  }
+
+  .aspect-ratio-4-3 > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .aspect-ratio-1-1 {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%; /* 1:1 aspect ratio */
+  }
+
+  .aspect-ratio-1-1 > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Responsive background images */
+  .bg-responsive {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  @media (max-width: 768px) {
+    .bg-responsive {
+      background-size: contain;
+    }
+  }
+
+  /* Phase 4: Touch-Friendly Interactions */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .touch-button {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .touch-button:hover {
+    transform: scale(1.02);
+  }
+
+  .touch-button:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    .touch-button {
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+    }
+  }
+
+  /* Disable text selection on touch devices */
+  .no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Improve scroll performance on mobile */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Phase 4: Animation Optimization for Mobile */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Optimize animations for mobile performance */
+  .mobile-optimized-animation {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .animate-spin {
+      animation-duration: 4s; /* Slower on mobile for better performance */
+    }
+    
+    .animate-bounce {
+      animation-duration: 1.5s;
+    }
+  }
+
+  /* Reduce motion on mobile devices with limited processing power */
+  @media (max-width: 480px) {
+    .animate-pulse {
+      animation: none;
+    }
+    
+    .complex-animation {
+      animation: none;
+    }
+  }
+
+  /* Phase 5: Accessibility Enhancements */
+  /* Focus styles for keyboard navigation */
+  .focus-visible {
+    outline: 2px solid #FEFE5B;
+    outline-offset: 2px;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .custom-bg {
+      border-width: 2px;
+      border-color: currentColor;
+    }
+  }
+
+  /* Skip links for screen readers */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 9999;
+  }
+
+  .skip-link:focus {
+    top: 6px;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Ensure sufficient color contrast */
+  .text-accessible {
+    color: #ffffff;
+    background-color: #000000;
+  }
+
+  /* Touch target sizing for accessibility */
+  .accessible-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Focus trap for modals */
+  .focus-trap {
+    position: relative;
+  }
+
+  .focus-trap:focus {
+    outline: none;
+  }
+
+  /* Glass-morphism scrollbar for all scrollable elements */
+  .glass-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .glass-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+  }
+
+  .glass-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .glass-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.6);
+  }
+
+  /* Firefox scrollbar */
+  .glass-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59, 130, 246, 0.4) rgba(0, 0, 0, 0.1);
+  }
+
+  /* Make all content non-selectable by default */
+  * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  /* Allow selection for interactive/input elements */
+  input,
+  textarea,
+  [contenteditable="true"],
+  a,
+  button {
+    user-select: auto;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+  }
+
+  /* Prevent image dragging */
+  img {
+    pointer-events: none;
+    user-drag: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Allow pointer events on interactive images/links */
+  a img,
+  button img {
+    pointer-events: auto;
+  }
+}
+
+@keyframes move {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(100px, 100px);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
