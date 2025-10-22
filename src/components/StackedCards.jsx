@@ -263,6 +263,7 @@ const StackedCards = ({
               disabled={isAnimating}
               className="
                 absolute -left-16 top-1/2 -translate-y-1/2 z-20
+                sm:-left-16 left-2 sm:top-1/2 top-4
                 w-12 h-12 text-white flex items-center justify-center
                 bg-black/40 hover:bg-yellow-400 hover:text-black
                 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed
