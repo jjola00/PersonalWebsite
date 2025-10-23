@@ -217,7 +217,7 @@ const MovieSection = () => {
             {/* Watch a Movie */}
             <div className="text-center">
               <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: '#FEFE5B' }}>
-                Watch a Movie
+                Random Movie
               </h3>
               {(movieData.randomMovie.success && movieData.randomMovie.data) || animationMovie ? (
                 <div>
@@ -361,7 +361,7 @@ const MovieSection = () => {
                 {/* Title */}
                 <div className="h-8 flex items-end mb-4">
                   <h3 className="text-responsive-md font-semibold" style={{ color: '#FEFE5B' }}>
-                    Watch a Movie
+                    Random Movie
                   </h3>
                 </div>
 
