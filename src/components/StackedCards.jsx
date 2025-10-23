@@ -6,7 +6,8 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import StarRating from './StarRating';
 
 
@@ -41,17 +42,17 @@ const StackedCards = ({
     }, autoRotateInterval);
 
     return () => clearInterval(interval);
-  }, [autoRotate, autoRotateInterval, items.length, currentIndex]);
+  }, [autoRotate, autoRotateInterval, items.length, nextCard]);
 
   // Navigate to next card
-  const nextCard = () => {
+  const nextCard = useCallback(() => {
     if (isAnimating || items.length <= 1) return;
 
     setIsAnimating(true);
     setCurrentIndex((prev) => (prev + 1) % items.length);
 
     setTimeout(() => setIsAnimating(false), 300);
-  };
+  }, [isAnimating, items.length]);
 
   // Navigate to previous card
   const previousCard = () => {
@@ -190,9 +191,11 @@ const StackedCards = ({
               {/* Movie Poster Card */}
               <div className="relative group">
                 {item.movie?.poster || item.poster ? (
-                  <img
+                  <Image
                     src={item.movie?.poster || item.poster}
                     alt={item.movie?.title || item.title || 'Movie poster'}
+                    width={parseInt(responsiveWidth) || parseInt(posterWidth)}
+                    height={parseInt(responsiveHeight) || parseInt(posterHeight)}
                     className={`
                       rounded-lg shadow-lg
                       ${isMainCard ? 'shadow-2xl border-2 border-yellow-400/30' : 'shadow-xl'}
@@ -203,7 +206,6 @@ const StackedCards = ({
                       height: responsiveHeight || posterHeight,
                       objectFit: 'cover' // Maintain aspect ratio while filling container
                     }}
-                    loading="lazy"
                   />
                 ) : (
                   <div
@@ -334,7 +336,7 @@ const StackedCards = ({
                   WebkitBoxOrient: 'vertical',
                   textOverflow: 'ellipsis'
                 }}>
-                "{items[currentIndex].review}"
+                &ldquo;{items[currentIndex].review}&rdquo;
               </p>
             </div>
           )}
