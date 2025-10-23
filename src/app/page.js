@@ -7,6 +7,7 @@ import BackgroundVideo from "@/components/BackgroundVideo";
 import AmbientBackground from "@/components/AmbientBackground";
 import BackgroundControls from "@/components/BackgroundControls";
 import ProfileImage from "@/components/ProfileImage";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { useBackground } from "@/components/BackgroundManager";
 
 export default function Home() {
@@ -18,9 +19,13 @@ export default function Home() {
       <div className="flex min-h-screen flex-col items-center justify-between relative">
         {/* Dynamic Background System */}
         {mode === 'ambient' ? (
-          <AmbientBackground effect={ambientEffect} />
+          <ErrorBoundary fallbackMessage="Background effect failed to load" showRetry={true}>
+            <AmbientBackground effect={ambientEffect} />
+          </ErrorBoundary>
         ) : (
-          <BackgroundVideo ref={backgroundVideoRef} />
+          <ErrorBoundary fallbackMessage="Background video failed to load" showRetry={true}>
+            <BackgroundVideo ref={backgroundVideoRef} />
+          </ErrorBoundary>
         )}
 
         {/* Background Controls */}
