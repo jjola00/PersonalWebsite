@@ -1,0 +1,16 @@
+{
+  "startTime": 1761234734469,
+  "endTime": 1761234761357,
+  "duration": 26888,
+  "success": false,
+  "bundleSize": null,
+  "errors": [
+    "Command failed: npm run build:fast"
+  ],
+  "warnings": [],
+  "performance": {
+    "staticAssetsSize": 609186177
+  },
+  "durationFormatted": "26.89s",
+  "timestamp": "2025-10-23T15:52:41.357Z"
+}

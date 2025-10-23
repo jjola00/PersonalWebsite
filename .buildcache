@@ -1,0 +1,30 @@
+# Build Cache Configuration
+# This file helps optimize build performance by caching dependencies and build artifacts
+
+# Cache directories (for CI/CD systems)
+node_modules/
+.next/cache/
+.next/static/
+.next/server/
+
+# Build artifacts to preserve
+.next/BUILD_ID
+.next/build-manifest.json
+.next/export-marker.json
+.next/images-manifest.json
+.next/package.json
+.next/prerender-manifest.json
+.next/routes-manifest.json
+
+# Cache keys for different environments
+# Production: package-lock.json + next.config.mjs + NODE_ENV
+# Development: package-lock.json + next.config.mjs + src/**
+
+# Invalidate cache when these files change:
+# - package.json
+# - package-lock.json  
+# - next.config.mjs
+# - tailwind.config.js
+# - postcss.config.js
+# - .env files
+# - src/** (source code changes)
