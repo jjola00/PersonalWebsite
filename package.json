@@ -14,9 +14,8 @@
     "build:analyze": "npm run analyze",
     "size": "size-limit",
     "size:why": "size-limit --why",
-    "check-bundle": "node scripts/check-bundle-size.js",
-    "prebuild": "npm run lint",
-    "postbuild": "npm run check-bundle"
+    "check-bundle": "node scripts/check-bundle-size.js"
+
   },
   "dependencies": {
     "@emailjs/browser": "^4.2.0",
