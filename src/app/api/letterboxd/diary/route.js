@@ -4,15 +4,8 @@ import { parseDiaryFeed, validateRSSFeed } from '@/utils/rssParser';
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const username = searchParams.get('username') || process.env.LETTERBOXD_USERNAME;
+    const username = 'jjola00'; // Hardcoded username
     const limit = parseInt(searchParams.get('limit')) || 5;
-
-    if (!username) {
-      return NextResponse.json(
-        { error: 'Username is required. Set LETTERBOXD_USERNAME environment variable or provide username parameter.' },
-        { status: 400 }
-      );
-    }
 
     // Construct Letterboxd diary RSS URL
     const rssUrl = `https://letterboxd.com/${username}/rss/`;
