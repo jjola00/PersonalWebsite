@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useBackground } from './BackgroundManager';
-import useScreenSize from './hooks/useScreenSize';
+import { useScreenSize } from '@/hooks/useResponsive';
 
 const BackgroundControls = () => {
   const { 

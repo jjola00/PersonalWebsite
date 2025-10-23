@@ -10,7 +10,7 @@ import {
   } from "lucide-react";
   import Link from "next/link";
   import React from "react";
-  import ResponsiveComponent from "../ResponsiveComponent";
+  import { useResponsive } from "@/hooks/useResponsive";
   import clsx from "clsx";
   import { motion } from "framer-motion";
   
@@ -55,10 +55,11 @@ const NavButton = ({
   labelDirection = "right",
   isMobile = false,
 }) => {
+  const { width } = useResponsive();
+  
   return (
-    <ResponsiveComponent>
-      {({ size }) => {
-        return size && size >= 768 ? (
+    <>
+      {width && width >= 768 ? (
           // Desktop/Tablet circular layout
           <div
             className="absolute cursor-pointer z-50"
@@ -129,8 +130,7 @@ const NavButton = ({
               )}
             </NavLink>
           </div>
-        );
-      }}
-    </ResponsiveComponent>
+        )}
+    </>
   );
 };  export default NavButton;
