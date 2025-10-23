@@ -1,9 +1,3 @@
-import bundleAnalyzer from '@next/bundle-analyzer';
-
-const withBundleAnalyzer = bundleAnalyzer({
-    enabled: process.env.ANALYZE === 'true',
-});
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
@@ -101,7 +95,7 @@ const nextConfig = {
     // Compiler optimizations for security and performance
     compiler: {
         removeConsole: process.env.NODE_ENV === 'production',
-        reactRemoveProperties: process.env.NODE_ENV === 'production' ? { properties: ['^data-testid$'] } : false,
+        reactRemoveProperties: process.env.NODE_ENV === 'production' ? { properties: ['^data-testid'] } : false,
         styledComponents: true,
     },
     // Enable experimental features for better performance
@@ -186,5 +180,5 @@ const nextConfig = {
         pagesBufferLength: 2,
     }
 }
-  
-export default withBundleAnalyzer(nextConfig);
+
+export default nextConfig;
