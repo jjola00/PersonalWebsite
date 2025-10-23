@@ -18,6 +18,7 @@
   
   # Memory optimization for build process
   NODE_OPTIONS = "--max-old-space-size=4096"
+  NPM_FLAGS = "--include=dev"
 
 # Essential plugin for Next.js
 [[plugins]]
