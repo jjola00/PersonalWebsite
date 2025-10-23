@@ -55,11 +55,25 @@ const NavButton = ({
   labelDirection = "right",
   isMobile = false,
 }) => {
-  const { width } = useResponsive();
+  const { width, isDesktop } = useResponsive();
+  const [isClient, setIsClient] = React.useState(false);
+  
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  // Prevent hydration mismatch by not rendering responsive content until client-side
+  if (!isClient) {
+    return (
+      <div className="absolute cursor-pointer z-50" style={{ transform: `translate(${x}, ${y})` }}>
+        <div className="w-14 h-14 rounded-full bg-black/30 backdrop-blur-sm border border-white/30 animate-pulse" />
+      </div>
+    );
+  }
   
   return (
     <>
-      {width && width >= 768 ? (
+      {isDesktop ? (
           // Desktop/Tablet circular layout
           <div
             className="absolute cursor-pointer z-50"

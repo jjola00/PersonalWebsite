@@ -1,23 +1,13 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
-import dynamic from "next/dynamic";
 import { BackgroundProvider } from "@/components/BackgroundManager";
 import { MobileNavigationProvider } from "@/contexts/MobileNavigationContext";
+import ClientFireFliesBackground from "@/components/ClientFireFliesBackground";
+import ClientWebVitalsTracker from "@/components/ClientWebVitalsTracker";
 
 // Import global error handler (initializes on import)
 import "@/utils/errorHandler";
-
-// Dynamic import for FireFliesBackground to reduce initial bundle size
-const FireFliesBackground = dynamic(() => import("@/components/FireFliesBackground"), {
-  ssr: false,
-  loading: () => null
-});
-
-// Dynamic import for Web Vitals tracking
-const WebVitalsTracker = dynamic(() => import("@/components/WebVitalsTracker"), {
-  ssr: false
-});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -51,8 +41,8 @@ export default function RootLayout({ children }) {
         <MobileNavigationProvider>
           <BackgroundProvider>
             {children}
-            <FireFliesBackground />
-            <WebVitalsTracker />
+            <ClientFireFliesBackground />
+            <ClientWebVitalsTracker />
           </BackgroundProvider>
         </MobileNavigationProvider>
       </body>
