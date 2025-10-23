@@ -36,6 +36,3 @@ next-env.d.ts
 .env
 
 /chop
-/public/wallpapers
-/public/backup-posters
-*.csv
