@@ -1,10 +1,28 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Form from "@/components/contact/Form";
-import AmbientBackground from "@/components/AmbientBackground";
-import BackgroundVideo from "@/components/BackgroundVideo";
-import BackgroundControls from "@/components/BackgroundControls";
 import { useBackground } from "@/components/BackgroundManager";
+
+// Dynamic imports for background components
+const AmbientBackground = dynamic(() => import("@/components/AmbientBackground"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed top-0 left-0 w-full h-full -z-50 bg-gradient-to-br from-purple-900/20 to-blue-900/20 animate-pulse" />
+  )
+});
+
+const BackgroundVideo = dynamic(() => import("@/components/BackgroundVideo"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed top-0 left-0 w-full h-full -z-50 bg-gradient-to-br from-gray-900 to-black animate-pulse" />
+  )
+});
+
+const BackgroundControls = dynamic(() => import("@/components/BackgroundControls"), {
+  ssr: false,
+  loading: () => null
+});
 
 export default function Contact() {
   const { mode, ambientEffect } = useBackground();

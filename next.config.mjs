@@ -20,8 +20,32 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'github-readme-streak-stats.herokuapp.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'github-readme-activity-graph.vercel.app'
+            },
+            {
+                protocol: 'https',
+                hostname: 'image.tmdb.org'
+            },
+            {
+                protocol: 'https',
+                hostname: 'a.ltrbxd.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.scdn.co'
+            },
+            {
+                protocol: 'https',
+                hostname: 'lastfm.freetls.fastly.net'
             }
-        ]
+        ],
+        formats: ['image/webp', 'image/avif'],
+        minimumCacheTTL: 60,
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
     },
     output: 'standalone',
     async headers() {
@@ -77,11 +101,63 @@ const nextConfig = {
     // Compiler optimizations for security and performance
     compiler: {
         removeConsole: process.env.NODE_ENV === 'production',
+        reactRemoveProperties: process.env.NODE_ENV === 'production' ? { properties: ['^data-testid$'] } : false,
+        styledComponents: true,
     },
-    // Enable experimental features for better security
+    // Enable experimental features for better performance
     experimental: {
         serverComponentsExternalPackages: [],
-    }
+        optimizePackageImports: [
+            'lucide-react',
+            'framer-motion',
+            'clsx'
+        ],
+    },
+    // Webpack optimizations
+    webpack: (config, { dev, isServer }) => {
+        // Production optimizations
+        if (!dev) {
+            config.optimization = {
+                ...config.optimization,
+                splitChunks: {
+                    chunks: 'all',
+                    cacheGroups: {
+                        vendor: {
+                            test: /[\\/]node_modules[\\/]/,
+                            name: 'vendors',
+                            chunks: 'all',
+                            priority: 10,
+                        },
+                        common: {
+                            name: 'common',
+                            minChunks: 2,
+                            chunks: 'all',
+                            priority: 5,
+                            reuseExistingChunk: true,
+                        },
+                        background: {
+                            test: /[\\/](AmbientBackground|BackgroundVideo|FireFliesBackground)[\\/]/,
+                            name: 'background',
+                            chunks: 'all',
+                            priority: 15,
+                        },
+                    },
+                },
+            };
+        }
+
+        // Tree shaking is handled by Next.js automatically
+
+        return config;
+    },
+    // Performance optimizations
+    poweredByHeader: false,
+    compress: true,
+    generateEtags: true,
+    // Static optimization
+    trailingSlash: false,
+    // Build optimizations
+    swcMinify: true
 }
   
 export default withBundleAnalyzer(nextConfig);

@@ -1,9 +1,22 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useMobileNavigation } from '@/contexts/MobileNavigationContext';
-import StackedCards from '@/components/StackedCards';
 import { cleanMovieData, cleanTitle } from '@/utils/titleCleaner';
+
+// Dynamic import for StackedCards component to reduce initial bundle size
+const StackedCards = dynamic(() => import('@/components/StackedCards'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-80 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400 mx-auto mb-2"></div>
+        <p className="text-gray-400 text-sm">Loading movies...</p>
+      </div>
+    </div>
+  )
+});
 
 const MovieSection = () => {
   const { isMobileMenuOpen } = useMobileNavigation();

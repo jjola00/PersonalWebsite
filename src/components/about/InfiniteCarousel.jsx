@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 const InfiniteCarousel = ({ items, direction = 'left', speed = 20 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -32,11 +33,13 @@ const InfiniteCarousel = ({ items, direction = 'left', speed = 20 }) => {
       >
         {/* Render extended items - no dashes, just logos */}
         {extendedItems.map((item, index) => (
-          <img
+          <Image
             key={`logo-${index}`}
             src={item.logo}
             alt={item.alt}
             title={item.name}
+            width={80}
+            height={80}
             onClick={() => handleLogoClick(item.name)}
             className="
               w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20
