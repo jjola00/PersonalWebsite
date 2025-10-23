@@ -37,12 +37,20 @@ const StackedCards = ({
   useEffect(() => {
     if (!autoRotate || items.length <= 1) return;
 
-    const interval = setInterval(() => {
-      nextCard();
-    }, autoRotateInterval);
+    let interval;
+    
+    // Add initial delay of 8 seconds before starting auto-rotation
+    const initialDelay = setTimeout(() => {
+      interval = setInterval(() => {
+        nextCard();
+      }, autoRotateInterval);
+    }, 8000); // 8 second initial delay
 
-    return () => clearInterval(interval);
-  }, [autoRotate, autoRotateInterval, items.length, currentIndex]);
+    return () => {
+      clearTimeout(initialDelay);
+      if (interval) clearInterval(interval);
+    };
+  }, [autoRotate, autoRotateInterval, items.length]);
 
   // Navigate to next card
   const nextCard = () => {
