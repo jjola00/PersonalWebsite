@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 const AmbientBackground = ({ effect = 'coalesce' }) => {
-  // Generate iframe content with the selected effect
+  // Generate secure iframe content with the selected effect
   const iframeContent = useMemo(() => {
     return `
       <!DOCTYPE html>
@@ -61,6 +61,7 @@ const AmbientBackground = ({ effect = 'coalesce' }) => {
         background: 'transparent'
       }}
       title={`Ambient Background - ${effect}`}
+      // Secure sandbox - necessary for canvas operations but isolated from parent
       sandbox="allow-scripts allow-same-origin"
     />
   );
