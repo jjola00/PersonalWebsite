@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build",
+    "build:analyze": "npm run analyze",
+    "size": "size-limit",
+    "size:why": "size-limit --why",
+    "check-bundle": "node scripts/check-bundle-size.js"
   },
   "dependencies": {
     "@emailjs/browser": "^4.2.0",
@@ -17,15 +22,29 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.0",
-    "sharp": "^0.33.5",
     "sonner": "^1.4.3",
     "web-vitals": "^5.1.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.0",
+    "@size-limit/preset-big-lib": "^11.2.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.1",
     "postcss": "^8",
+    "size-limit": "^11.2.0",
     "tailwindcss": "^3.3.0"
-  }
+  },
+  "size-limit": [
+    {
+      "name": "Client bundle (First Load JS)",
+      "path": ".next/static/chunks/pages/_app-*.js",
+      "limit": "300 KB"
+    },
+    {
+      "name": "Client bundle (Total)",
+      "path": ".next/static/**/*.js",
+      "limit": "500 KB"
+    }
+  ]
 }

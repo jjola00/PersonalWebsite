@@ -4,7 +4,6 @@ import clsx from "clsx";
 import FireFliesBackground from "@/components/FireFliesBackground";
 import { BackgroundProvider } from "@/components/BackgroundManager";
 import { MobileNavigationProvider } from "@/contexts/MobileNavigationContext";
-import ResponsiveDebugger from "@/components/ResponsiveDebugger";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,7 +38,6 @@ export default function RootLayout({ children }) {
           <BackgroundProvider>
             {children}
             <FireFliesBackground />
-            <ResponsiveDebugger />
           </BackgroundProvider>
         </MobileNavigationProvider>
       </body>
