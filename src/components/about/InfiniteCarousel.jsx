@@ -68,40 +68,7 @@ const InfiniteCarousel = ({ items, direction = 'left', speed = 20 }) => {
         </div>
       )}
 
-      <style jsx>{`
-        @keyframes scroll-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-25%); }
-        }
 
-        @keyframes scroll-right {
-          0% { transform: translateX(-25%); }
-          100% { transform: translateX(0); }
-        }
-
-        @keyframes fade-in-out {
-          0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-          20% { opacity: 1; transform: translateX(-50%) translateY(0); }
-          80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-          100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-        }
-
-        .animate-scroll-left {
-          animation: scroll-left linear infinite;
-        }
-
-        .animate-scroll-right {
-          animation: scroll-right linear infinite;
-        }
-
-        .animate-fade-in-out {
-          animation: fade-in-out 2s ease-in-out;
-        }
-
-        .paused {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
 };

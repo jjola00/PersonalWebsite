@@ -22,8 +22,8 @@ const getDeviceType = (width) => {
 // Main responsive hook
 export const useResponsive = () => {
   const [screenSize, setScreenSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+    width: 1200, // Default to desktop width for SSR
+    height: 800,
     deviceType: 'desktop',
     isMobile: false,
     isTablet: false,

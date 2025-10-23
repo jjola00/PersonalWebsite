@@ -104,20 +104,18 @@ const nextConfig = {
     },
     // Enable experimental features for better performance
     experimental: {
-        serverComponentsExternalPackages: [],
         optimizePackageImports: [
             'lucide-react',
             'framer-motion',
             'clsx'
         ],
-        // Enable build caching for faster builds
-        turbotrace: {
-            logLevel: 'error'
-        },
         // Optimize CSS loading - disabled due to build issues
         // optimizeCss: true,
-        // Server Actions are enabled by default in Next.js 14+
+        // Server Actions are enabled by default in Next.js 15+
     },
+
+    // External packages for server components
+    serverExternalPackages: [],
     // Webpack optimizations
     webpack: (config, { dev, isServer }) => {
         // Production optimizations
@@ -161,15 +159,9 @@ const nextConfig = {
     generateEtags: true,
     // Static optimization
     trailingSlash: false,
-    // Build optimizations
-    swcMinify: true,
-    
     // Production build optimizations
     productionBrowserSourceMaps: false,
-    
-    // Optimize fonts
-    optimizeFonts: true,
-    
+
     // Enable build-time optimizations
     modularizeImports: {
         'lucide-react': {
@@ -177,7 +169,7 @@ const nextConfig = {
             skipDefaultConversion: true
         }
     },
-    
+
     // Build performance
     onDemandEntries: {
         maxInactiveAge: 25 * 1000,

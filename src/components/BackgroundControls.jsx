@@ -57,7 +57,7 @@ const BackgroundControls = () => {
               active:scale-95
               transition-all duration-300 ease-out
               hover:animate-pulse
-              glow-effect
+              shadow-lg shadow-purple-500/30
               accessible-touch-target
             "
             title="Use Custom Wallpapers"
@@ -93,7 +93,7 @@ const BackgroundControls = () => {
                 active:scale-95
                 transition-all duration-300 ease-out
                 hover:animate-pulse
-                glow-effect-blue
+                shadow-lg shadow-blue-500/30
                 accessible-touch-target
               "
               title="Back to Ambient"
@@ -126,7 +126,7 @@ const BackgroundControls = () => {
                 active:scale-95
                 transition-all duration-300 ease-out
                 hover:animate-pulse
-                glow-effect
+                shadow-lg shadow-purple-500/30
                 accessible-touch-target
               "
               title="Change Video"
@@ -181,20 +181,7 @@ const BackgroundControls = () => {
         </div>
       )}
 
-      <style jsx>{`
-        .glow-effect {
-          box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-        }
-        .glow-effect:hover {
-          box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-        }
-        .glow-effect-blue {
-          box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-        }
-        .glow-effect-blue:hover {
-          box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-        }
-      `}</style>
+
     </>
   );
 };

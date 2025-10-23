@@ -37,13 +37,27 @@ const mobileMenuVariants = {
 const Navigation = () => {
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileNavigation();
   const angleIncrement = 360 / BtnList.length;
-  const { width } = useResponsive();
+  const { width, isDesktop } = useResponsive();
+  const [isClient, setIsClient] = useState(false);
   const isLarge = width >= 1024;
   const isMedium = width >= 768;
 
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Prevent hydration mismatch by showing loading state until client-side
+  if (!isClient) {
+    return (
+      <div className="w-full fixed h-screen flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full bg-black/30 backdrop-blur-sm border border-white/30 animate-pulse" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full fixed h-screen flex items-center justify-center">
-      {width && width >= 768 ? (
+      {isDesktop ? (
             // Desktop/Tablet circular navigation
             <motion.div
               variants={container}
