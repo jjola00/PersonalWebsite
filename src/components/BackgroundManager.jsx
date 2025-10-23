@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const BackgroundContext = createContext();
 
@@ -12,71 +12,70 @@ export const useBackground = () => {
   return context;
 };
 
+// Default background settings
+const DEFAULT_SETTINGS = {
+  mode: 'ambient',
+  ambientEffect: 'coalesce',
+  customVideoIndex: 0
+};
+
+// Consolidated localStorage operations
+const backgroundStorage = {
+  load: () => {
+    if (typeof window === 'undefined') return DEFAULT_SETTINGS;
+    
+    try {
+      return {
+        mode: localStorage.getItem('backgroundMode') || DEFAULT_SETTINGS.mode,
+        ambientEffect: localStorage.getItem('ambientEffect') || DEFAULT_SETTINGS.ambientEffect,
+        customVideoIndex: parseInt(localStorage.getItem('customVideoIndex') || '0')
+      };
+    } catch (error) {
+      console.error('Error loading background preferences:', error);
+      return DEFAULT_SETTINGS;
+    }
+  },
+  
+  save: (key, value) => {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      localStorage.setItem(key, value.toString());
+    } catch (error) {
+      console.error(`Error saving ${key}:`, error);
+    }
+  }
+};
+
 export const BackgroundProvider = ({ children }) => {
-  const [mode, setMode] = useState('ambient'); // 'ambient' or 'custom'
-  const [ambientEffect, setAmbientEffect] = useState('pipeline'); // 'aurora', 'swirl', 'shift', 'coalesce', 'pipeline'
-  const [customVideoIndex, setCustomVideoIndex] = useState(0);
+  const [backgroundState, setBackgroundState] = useState(DEFAULT_SETTINGS);
 
   // Load preferences from localStorage on mount
   useEffect(() => {
-    try {
-      const savedMode = localStorage.getItem('backgroundMode');
-      const savedEffect = localStorage.getItem('ambientEffect');
-      const savedVideoIndex = localStorage.getItem('customVideoIndex');
-
-      // Always default to ambient mode with Coalesce effect if no saved preferences
-      setMode(savedMode || 'ambient');
-      setAmbientEffect(savedEffect || 'coalesce');
-      setCustomVideoIndex(savedVideoIndex ? parseInt(savedVideoIndex) : 0);
-    } catch (error) {
-      console.error('Error loading background preferences:', error);
-      // Fallback to defaults
-      setMode('ambient');
-      setAmbientEffect('coalesce');
-      setCustomVideoIndex(0);
-    }
+    const savedSettings = backgroundStorage.load();
+    setBackgroundState(savedSettings);
   }, []);
 
-  // Save preferences to localStorage when they change
+  // Consolidated localStorage save effect
   useEffect(() => {
-    try {
-      localStorage.setItem('backgroundMode', mode);
-    } catch (error) {
-      console.error('Error saving background mode:', error);
-    }
-  }, [mode]);
+    backgroundStorage.save('backgroundMode', backgroundState.mode);
+    backgroundStorage.save('ambientEffect', backgroundState.ambientEffect);
+    backgroundStorage.save('customVideoIndex', backgroundState.customVideoIndex);
+  }, [backgroundState]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('ambientEffect', ambientEffect);
-    } catch (error) {
-      console.error('Error saving ambient effect:', error);
-    }
-  }, [ambientEffect]);
+  // Memoized action functions to prevent unnecessary re-renders
+  const actions = useMemo(() => ({
+    switchToCustom: () => setBackgroundState(prev => ({ ...prev, mode: 'custom' })),
+    switchToAmbient: () => setBackgroundState(prev => ({ ...prev, mode: 'ambient' })),
+    setEffect: (effect) => setBackgroundState(prev => ({ ...prev, ambientEffect: effect })),
+    nextVideo: () => setBackgroundState(prev => ({ ...prev, customVideoIndex: prev.customVideoIndex + 1 }))
+  }), []);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('customVideoIndex', customVideoIndex.toString());
-    } catch (error) {
-      console.error('Error saving custom video index:', error);
-    }
-  }, [customVideoIndex]);
-
-  const switchToCustom = () => setMode('custom');
-  const switchToAmbient = () => setMode('ambient');
-  const setEffect = (effect) => setAmbientEffect(effect);
-  // Advance to next video; actual wrap is handled where videos are read (by list length)
-  const nextVideo = () => setCustomVideoIndex(prev => prev + 1);
-
-  const value = {
-    mode,
-    ambientEffect,
-    customVideoIndex,
-    switchToCustom,
-    switchToAmbient,
-    setEffect,
-    nextVideo
-  };
+  // Memoized context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
+    ...backgroundState,
+    ...actions
+  }), [backgroundState, actions]);
 
   return (
     <BackgroundContext.Provider value={value}>

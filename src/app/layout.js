@@ -5,6 +5,9 @@ import dynamic from "next/dynamic";
 import { BackgroundProvider } from "@/components/BackgroundManager";
 import { MobileNavigationProvider } from "@/contexts/MobileNavigationContext";
 
+// Import global error handler (initializes on import)
+import "@/utils/errorHandler";
+
 // Dynamic import for FireFliesBackground to reduce initial bundle size
 const FireFliesBackground = dynamic(() => import("@/components/FireFliesBackground"), {
   ssr: false,

@@ -2,8 +2,7 @@
 import { BtnList } from "@/app/data";
 import React, { useState } from "react";
 import NavButton from "./NavButton";
-import useScreenSize from "../hooks/useScreenSize";
-import ResponsiveComponent from "../ResponsiveComponent";
+import { useResponsive } from "@/hooks/useResponsive";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useMobileNavigation } from "@/contexts/MobileNavigationContext";
@@ -38,15 +37,13 @@ const mobileMenuVariants = {
 const Navigation = () => {
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileNavigation();
   const angleIncrement = 360 / BtnList.length;
-  const size = useScreenSize();
-  const isLarge = size >= 1024;
-  const isMedium = size >= 768;
+  const { width } = useResponsive();
+  const isLarge = width >= 1024;
+  const isMedium = width >= 768;
 
   return (
     <div className="w-full fixed h-screen flex items-center justify-center">
-      <ResponsiveComponent>
-        {({ size }) => {
-          return size && size >= 768 ? (
+      {width && width >= 768 ? (
             // Desktop/Tablet circular navigation
             <motion.div
               variants={container}
@@ -143,9 +140,7 @@ const Navigation = () => {
                 )}
               </AnimatePresence>
             </>
-          );
-        }}
-      </ResponsiveComponent>
+          )}
     </div>
   );
 };
