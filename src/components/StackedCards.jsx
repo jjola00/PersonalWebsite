@@ -7,6 +7,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import StarRating from './StarRating';
 
 
@@ -190,20 +191,22 @@ const StackedCards = ({
               {/* Movie Poster Card */}
               <div className="relative group">
                 {item.movie?.poster || item.poster ? (
-                  <img
+                  <Image
                     src={item.movie?.poster || item.poster}
                     alt={item.movie?.title || item.title || 'Movie poster'}
+                    width={240}
+                    height={360}
                     className={`
-                      rounded-lg shadow-lg
+                      rounded-lg shadow-lg object-cover
                       ${isMainCard ? 'shadow-2xl border-2 border-yellow-400/30' : 'shadow-xl'}
                       transition-all duration-300
                     `}
                     style={{
                       width: responsiveWidth || posterWidth,
                       height: responsiveHeight || posterHeight,
-                      objectFit: 'cover' // Maintain aspect ratio while filling container
                     }}
                     loading="lazy"
+                    unoptimized // For external movie poster URLs
                   />
                 ) : (
                   <div
