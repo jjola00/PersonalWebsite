@@ -5,10 +5,13 @@
   # Directory to publish (Next.js output)
   publish = ".next"
   
-  # Node.js version
-  environment = { NODE_VERSION = "18" }
+  # Build timeout
+  command_timeout_minutes = 15
 
 [build.environment]
+  # Node.js version
+  NODE_VERSION = "18"
+  
   # Build optimizations
   NODE_ENV = "production"
   NEXT_TELEMETRY_DISABLED = "1"
@@ -36,6 +39,18 @@
 
 [build.processing.images]
   compress = true
+
+# Build caching for faster deployments
+[build.cache]
+  # Cache node_modules for faster installs
+  node_modules = true
+  
+  # Cache Next.js build artifacts
+  ".next/cache" = true
+  
+  # Cache package manager files
+  "package-lock.json" = true
+  "yarn.lock" = true
 
 # Headers for security and performance
 [[headers]]
@@ -72,7 +87,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  conditions = {Role = ["admin"]}
 
 # Build plugins for optimization
 [[plugins]]
@@ -110,19 +124,3 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-
-# Build timeout and resource limits
-[build]
-  command_timeout_minutes = 15
-
-# Build caching for faster deployments
-[build.cache]
-  # Cache node_modules for faster installs
-  node_modules = true
-  
-  # Cache Next.js build artifacts
-  ".next/cache" = true
-  
-  # Cache package manager files
-  "package-lock.json" = true
-  "yarn.lock" = true
