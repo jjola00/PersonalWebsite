@@ -126,37 +126,6 @@ export const useMemoryOptimization = () => {
   }, []);
 };
 
-// Network-aware loading
-export const useNetworkStatus = () => {
-  const [networkStatus, setNetworkStatus] = useState({
-    online: navigator.onLine,
-    effectiveType: navigator.connection?.effectiveType || 'unknown',
-    downlink: navigator.connection?.downlink || 0
-  });
-
-  useEffect(() => {
-    const updateNetworkStatus = () => {
-      setNetworkStatus({
-        online: navigator.onLine,
-        effectiveType: navigator.connection?.effectiveType || 'unknown',
-        downlink: navigator.connection?.downlink || 0
-      });
-    };
-
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
-    navigator.connection?.addEventListener('change', updateNetworkStatus);
-
-    return () => {
-      window.removeEventListener('online', updateNetworkStatus);
-      window.removeEventListener('offline', updateNetworkStatus);
-      navigator.connection?.removeEventListener('change', updateNetworkStatus);
-    };
-  }, []);
-
-  return networkStatus;
-};
-
 // Performance monitoring
 export const usePerformanceMonitor = () => {
   useEffect(() => {
