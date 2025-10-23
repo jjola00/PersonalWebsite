@@ -15,7 +15,7 @@ export const useBackground = () => {
 // Default background settings
 const DEFAULT_SETTINGS = {
   mode: 'ambient',
-  ambientEffect: 'coalesce',
+  ambientEffect: 'pipeline',
   customVideoIndex: 0
 };
 
@@ -23,7 +23,7 @@ const DEFAULT_SETTINGS = {
 const backgroundStorage = {
   load: () => {
     if (typeof window === 'undefined') return DEFAULT_SETTINGS;
-    
+
     try {
       return {
         mode: localStorage.getItem('backgroundMode') || DEFAULT_SETTINGS.mode,
@@ -35,10 +35,10 @@ const backgroundStorage = {
       return DEFAULT_SETTINGS;
     }
   },
-  
+
   save: (key, value) => {
     if (typeof window === 'undefined') return;
-    
+
     try {
       localStorage.setItem(key, value.toString());
     } catch (error) {

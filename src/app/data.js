@@ -22,12 +22,6 @@ const baseBtnList = [
   },
 ];
 
-// Add test page link in development mode
-export const BtnList = process.env.NODE_ENV === 'development' 
-  ? [
-      ...baseBtnList,
-      { label: "Test Movies", link: "/test-movies", icon: "test", newTab: false },
-    ]
-  : baseBtnList;
+export const BtnList = baseBtnList;
 
 

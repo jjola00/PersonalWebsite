@@ -6,7 +6,6 @@ import {
     NotebookText,
     Phone,
     User,
-    TestTube,
   } from "lucide-react";
   import Link from "next/link";
   import React from "react";
@@ -30,8 +29,6 @@ import {
         return <Instagram className="w-full h-auto" strokeWidth={1.5} />;
       case "resume":
         return <NotebookText className="w-full h-auto" strokeWidth={1.5} />;
-      case "test":
-        return <TestTube className="w-full h-auto" strokeWidth={1.5} />;
   
       default:
         return <Home className="w-full h-auto" strokeWidth={1.5} />;
