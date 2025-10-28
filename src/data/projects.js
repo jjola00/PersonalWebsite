@@ -13,22 +13,6 @@
  * }
  */
 
-// Centralized featured project configuration
-export const FEATURED_PROJECT_CONFIG = {
-  // The title of the project that should be featured
-  featuredProjectTitle: "StableWise",
-  
-  // Alternative: Could use ID instead of title for more robust identification
-  // featuredProjectId: 1,
-  
-  // Display configuration for featured projects
-  displayConfig: {
-    showFeaturedSection: true,
-    featuredSectionTitle: "Featured Projects",
-    otherProjectsTitle: "Other Projects"
-  }
-};
-
 export const projects = [
   {
     id: 1,
@@ -86,25 +70,14 @@ export const projects = [
   },
 ];
 
-// Helper function to get featured project using centralized configuration
+// Helper function to get featured project (StableWise)
 export const getFeaturedProject = () => {
-  return projects.find(project => project.title === FEATURED_PROJECT_CONFIG.featuredProjectTitle);
+  return projects.find(project => project.title === "StableWise");
 };
 
 // Helper function to get all projects except the featured one
 export const getOtherProjects = () => {
-  return projects.filter(project => project.title !== FEATURED_PROJECT_CONFIG.featuredProjectTitle);
-};
-
-// Helper function to check if a project is featured
-export const isProjectFeatured = (project) => {
-  if (!project) return false;
-  return project.title === FEATURED_PROJECT_CONFIG.featuredProjectTitle;
-};
-
-// Helper function to get featured project title
-export const getFeaturedProjectTitle = () => {
-  return FEATURED_PROJECT_CONFIG.featuredProjectTitle;
+  return projects.filter(project => project.title !== "StableWise");
 };
 
 // Helper function to get all projects
