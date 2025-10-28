@@ -74,14 +74,20 @@ const ProjectCard = ({ project, featured = false }) => {
 
         {/* Technologies */}
         <div className="flex flex-wrap gap-2">
-          {project.technologies.map((tech, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 bg-blue-500/20 text-blue-200 text-xs rounded-md border border-blue-500/30"
-            >
-              {tech}
+          {project.technologies && project.technologies.length > 0 ? (
+            project.technologies.map((tech, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 bg-blue-500/20 text-blue-200 text-xs rounded-md border border-blue-500/30"
+              >
+                {tech}
+              </span>
+            ))
+          ) : (
+            <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded-md border border-gray-500/30">
+              No technologies listed
             </span>
-          ))}
+          )}
         </div>
 
         {/* Links */}
