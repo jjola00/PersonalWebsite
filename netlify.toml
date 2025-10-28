@@ -38,6 +38,13 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Wallpaper videos caching - 30 days
+[[headers]]
+  for = "/wallpapers/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+    Accept-Ranges = "bytes"
+
 # API routes - no caching
 [[headers]]
   for = "/api/*"
