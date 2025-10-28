@@ -3,13 +3,7 @@
 import dynamic from "next/dynamic";
 import { useBackground } from "@/components/BackgroundManager";
 import ProjectCard from "@/components/projects/ProjectCard";
-import { 
-  getFeaturedProject, 
-  getOtherProjects, 
-  validateProject, 
-  isProjectFeatured, 
-  FEATURED_PROJECT_CONFIG 
-} from "@/data/projects";
+import { getFeaturedProject, getOtherProjects, validateProject } from "@/data/projects";
 
 // Dynamic imports for background components
 const AmbientBackground = dynamic(() => import("@/components/AmbientBackground"), {
@@ -42,11 +36,11 @@ const adaptProjectForCard = (project) => {
     const technologies = [];
     const desc = description.toLowerCase();
     const title = projectTitle.toLowerCase();
-    
+
     // Comprehensive technology mapping with variations and common patterns
     const techMap = {
       'React': ['react', 'jsx'],
-      'TypeScript': ['typescript', 'ts'],
+      'TypeScript': ['typescript', ' ts ', '.ts'],
       'JavaScript': ['javascript', 'js'],
       'Python': ['python', 'py'],
       'Java': ['java'],
@@ -77,14 +71,14 @@ const adaptProjectForCard = (project) => {
       'Testing': ['test', 'unit test', 'testing'],
       'Build Tools': ['build', 'script', 'deployment']
     };
-    
+
     // Extract technologies based on keywords in description and title
     Object.entries(techMap).forEach(([tech, keywords]) => {
       if (keywords.some(keyword => desc.includes(keyword) || title.includes(keyword))) {
         technologies.push(tech);
       }
     });
-    
+
     // Project-specific technology additions based on known projects and their contexts
     const projectSpecificTech = {
       'StableWise': ['React', 'TypeScript', 'Supabase', 'Netlify', 'AI/ML', 'Web'],
@@ -94,19 +88,25 @@ const adaptProjectForCard = (project) => {
       'Zork': ['C++', 'Qt', 'Game Dev', 'Build Tools'],
       'Leet Code Adventures': ['Python', 'C++', 'Algorithms']
     };
-    
+
     // Add project-specific technologies if not already included
     if (projectSpecificTech[projectTitle]) {
+      // For projects with specific tech lists, replace auto-detected ones
+      if (projectTitle === 'Zork') {
+        // Override auto-detection for Zork to prevent false positives
+        return projectSpecificTech[projectTitle];
+      }
+
       projectSpecificTech[projectTitle].forEach(tech => {
         if (!technologies.includes(tech)) {
           technologies.push(tech);
         }
       });
     }
-    
+
     // Remove duplicates and ensure we have meaningful technologies
     const uniqueTechnologies = [...new Set(technologies)];
-    
+
     // If no technologies found, extract from status or use fallback
     if (uniqueTechnologies.length === 0) {
       if (project.status && project.status !== 'Unknown') {
@@ -115,7 +115,7 @@ const adaptProjectForCard = (project) => {
         uniqueTechnologies.push('Software');
       }
     }
-    
+
     // Prioritize more specific technologies and limit to 6 most relevant
     const priorityOrder = ['React', 'TypeScript', 'Python', 'Java', 'C++', 'Flutter', 'AI/ML', 'Web', 'Mobile'];
     const sortedTechnologies = uniqueTechnologies.sort((a, b) => {
@@ -126,44 +126,44 @@ const adaptProjectForCard = (project) => {
       if (bIndex !== -1) return 1;
       return 0;
     });
-    
+
     return sortedTechnologies.slice(0, 6);
   };
-  
+
   // Enhanced URL handling with better detection and fallback logic
   const processProjectLinks = (demoLink, projectTitle) => {
     if (!demoLink) {
       return { githubUrl: null, liveUrl: null };
     }
-    
+
     const isGithubUrl = demoLink.includes('github.com');
     const isLiveUrl = demoLink.includes('http') && !isGithubUrl;
-    
+
     // For projects that typically have both GitHub and live versions
     const projectsWithLiveVersions = ['StableWise'];
     const hasLiveVersion = projectsWithLiveVersions.includes(projectTitle);
-    
+
     return {
       githubUrl: isGithubUrl ? demoLink : null,
       liveUrl: isLiveUrl || hasLiveVersion ? demoLink : null
     };
   };
-  
+
   // Validate project data structure
   if (!project || typeof project !== 'object') {
     console.warn('Invalid project data: not an object', project);
     return null;
   }
-  
+
   if (!project.title || !project.description) {
     console.warn('Invalid project data: missing required fields', project);
     return null;
   }
-  
+
   // Process URLs and technologies
   const { githubUrl, liveUrl } = processProjectLinks(project.demoLink, project.title);
   const technologies = extractTechnologies(project.description || '', project.title || '');
-  
+
   // Return adapted project object with all required properties for ProjectCard
   return {
     ...project,
@@ -187,7 +187,7 @@ const ensureProjectProperties = (project) => {
   if (!project || typeof project !== 'object') {
     return null;
   }
-  
+
   // Define required properties with fallbacks
   const requiredProperties = {
     id: project.id || Math.random(),
@@ -200,13 +200,13 @@ const ensureProjectProperties = (project) => {
     liveUrl: project.liveUrl || null,
     featured: Boolean(project.featured)
   };
-  
+
   // Validate that essential properties exist
   if (!requiredProperties.title || !requiredProperties.description) {
     console.warn('Project missing essential properties:', project);
     return null;
   }
-  
+
   return requiredProperties;
 };
 
@@ -218,10 +218,10 @@ const separateProjectsByFeatured = (projects) => {
     console.warn('Projects is not an array:', projects);
     return { featured: null, others: [] };
   }
-  
+
   const stableWise = projects.find(project => project && project.title === "StableWise");
   const others = projects.filter(project => project && project.title !== "StableWise");
-  
+
   return {
     featured: stableWise || null,
     others: others || []
@@ -230,11 +230,11 @@ const separateProjectsByFeatured = (projects) => {
 
 export default function Projects() {
   const { mode, ambientEffect } = useBackground();
-  
+
   // Get real project data using centralized data functions
   const featuredProject = getFeaturedProject();
   const otherProjects = getOtherProjects();
-  
+
   // Enhanced project processing with comprehensive validation and adaptation
   const processProjects = () => {
     try {
@@ -249,7 +249,7 @@ export default function Projects() {
           console.warn('Featured project failed validation:', featuredProject);
         }
       }
-      
+
       // Process other projects
       const processedOthers = otherProjects
         .filter(project => {
@@ -264,7 +264,7 @@ export default function Projects() {
           return adapted ? ensureProjectProperties(adapted) : null;
         })
         .filter(project => project !== null);
-      
+
       return {
         featured: processedFeatured,
         others: processedOthers
@@ -277,10 +277,10 @@ export default function Projects() {
       };
     }
   };
-  
+
   // Process all projects with error handling
   const { featured: adaptedFeaturedProject, others: adaptedOtherProjects } = processProjects();
-  
+
   // Log processing results for debugging
   if (process.env.NODE_ENV === 'development') {
     console.log('Projects processing results:', {
@@ -315,14 +315,16 @@ export default function Projects() {
         {/* Featured Projects */}
         <div className="w-full max-w-6xl px-4">
           <h2 className="text-2xl font-semibold text-blue-100 mb-6 text-center">Featured</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {adaptedFeaturedProject ? (
-              <ProjectCard key={adaptedFeaturedProject.id} project={adaptedFeaturedProject} featured={true} />
-            ) : (
-              <div className="col-span-full text-center text-gray-400 py-8">
-                <p>No featured project available</p>
-              </div>
-            )}
+          <div className="flex justify-center mb-12">
+            <div className="w-full max-w-2xl">
+              {adaptedFeaturedProject ? (
+                <ProjectCard key={adaptedFeaturedProject.id} project={adaptedFeaturedProject} featured={true} />
+              ) : (
+                <div className="text-center text-gray-400 py-8">
+                  <p>No featured project available</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Other Projects */}
