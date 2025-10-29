@@ -17,7 +17,9 @@ const WALLPAPERS = [
   '/wallpapers/EldenRIng-RayaLucaria.mp4',
   '/wallpapers/EldenRing-Malekith.mp4',
   '/wallpapers/SpiderMan.mp4',
-  '/wallpapers/KillBill.mp4'
+  '/wallpapers/KillBill.mp4',
+  '/wallpapers/Makima.mp4',
+  '/wallpapers/DarknessDevil.mp4'
 ];
 
 // Singleton shuffled wallpapers instance
