@@ -34,6 +34,7 @@ const adaptProjectForCard = (project) => {
   // Simple hardcoded technology tags for each project - edit these directly!
   const getProjectTechnologies = (projectTitle) => {
     const projectTechnologies = {
+      'Beetlehead Designs': ['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Sanity CMS', 'Framer Motion', 'EmailJS'],
       'StableWise': ['React', 'TypeScript', 'Supabase', 'API', 'AI-Powered Marketplace', 'Realtime'],
       'Aicoholics': ['Python', 'PyTorch', 'Machine Learning', 'DenseNet', 'Data Preprocessing', 'Vehicle Classification'],
       'Ecosim': ['Java', 'Maven', 'Design Patterns', 'Game Dev', 'Environmental Simulation'],
@@ -55,7 +56,7 @@ const adaptProjectForCard = (project) => {
     const isLiveUrl = demoLink.includes('http') && !isGithubUrl;
 
     // For projects that typically have both GitHub and live versions
-    const projectsWithLiveVersions = ['StableWise'];
+    const projectsWithLiveVersions = ['Beetlehead Designs', 'StableWise'];
     const hasLiveVersion = projectsWithLiveVersions.includes(projectTitle);
 
     return {
@@ -89,8 +90,8 @@ const adaptProjectForCard = (project) => {
     // Add separated GitHub and live URLs
     githubUrl: githubUrl || null,
     liveUrl: liveUrl || null,
-    // Mark StableWise as featured project
-    featured: project.title === "StableWise"
+    // Mark Beetlehead Designs as featured project
+    featured: project.title === "Beetlehead Designs"
   };
 };
 
@@ -126,7 +127,7 @@ const ensureProjectProperties = (project) => {
 };
 
 /**
- * Helper function to separate StableWise from other projects with validation
+ * Helper function to separate featured project from other projects with validation
  */
 const separateProjectsByFeatured = (projects) => {
   if (!Array.isArray(projects)) {
@@ -134,11 +135,11 @@ const separateProjectsByFeatured = (projects) => {
     return { featured: null, others: [] };
   }
 
-  const stableWise = projects.find(project => project && project.title === "StableWise");
-  const others = projects.filter(project => project && project.title !== "StableWise");
+  const featuredProject = projects.find(project => project && project.title === "Beetlehead Designs");
+  const others = projects.filter(project => project && project.title !== "Beetlehead Designs");
 
   return {
-    featured: stableWise || null,
+    featured: featuredProject || null,
     others: others || []
   };
 };
@@ -153,7 +154,7 @@ export default function Projects() {
   // Enhanced project processing with comprehensive validation and adaptation
   const processProjects = () => {
     try {
-      // Process featured project (StableWise)
+      // Process featured project (Beetlehead Designs)
       let processedFeatured = null;
       if (featuredProject) {
         // Validate using centralized validation
@@ -228,10 +229,10 @@ export default function Projects() {
         </div>
 
         {/* Featured Projects */}
-        <div className="w-full max-w-6xl px-4">
-          <h2 className="text-2xl font-semibold text-blue-100 mb-6 text-center">Featured</h2>
-          <div className="flex justify-center mb-12">
-            <div className="w-full max-w-2xl">
+        <div className="w-full max-w-7xl px-4">
+          <h2 className="text-3xl font-semibold text-blue-100 mb-8 text-center">⭐ Featured ⭐</h2>
+          <div className="flex justify-center mb-16">
+            <div className="w-full max-w-4xl">
               {adaptedFeaturedProject ? (
                 <ProjectCard key={adaptedFeaturedProject.id} project={adaptedFeaturedProject} featured={true} />
               ) : (
