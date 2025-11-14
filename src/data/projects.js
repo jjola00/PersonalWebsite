@@ -16,6 +16,15 @@
 export const projects = [
   {
     id: 1,
+    title: "Beetlehead Designs",
+    description:
+      "Beetlehead Designs is a portfolio website for an artist, featuring a dynamic filterable gallery with lightbox viewing, interactive comic reader, and an integrated Etsy shop. Built with Next.js 15 (App Router), TypeScript, Tailwind CSS, Sanity CMS for content management, Framer Motion for animations, EmailJS for contact forms, and deployed via Vercel. Check out the site yourself!",
+    status: "Completed",
+    imageUrl: "/projects/beetlehead-demo.png",
+    demoLink: "https://beetlehead-designs.vercel.app/",
+  },
+  {
+    id: 2,
     title: "StableWise",
     description:
       "StableWise is an online marketplace for showjumping horses and ponies(literally Linkedin for horses), featuring verified international competition data, AI-powered performance analysis, and advanced search tools to empower serious buyers and sellers. Built with a React TypeScript frontend, Supabase backend for secure real-time data and authentication, Netlify deployment, and Zoho email integration, it's live at stablewise.org",
@@ -24,7 +33,7 @@ export const projects = [
     demoLink: "https://stablewise.org",
   },
   {
-    id: 2,
+    id: 3,
     title: "Aicoholics",
     description:
       "A deep learning project exploring vehicle classification using multiple neural network architectures, with practical applications in automated toll systems. Implemented the DenseNet model and data preprocessing pipeline. Compares DenseNet, a custom CNN, and AlexNet to classify vehicles without license plate recognition. Built with Python, PyTorch, and Flask with notebooks, visualization, web UI, trained models, evaluation scripts, and DB management.",
@@ -33,7 +42,7 @@ export const projects = [
     demoLink: "https://github.com/ISE-CS4445-AI/ai-project-aicoholics",
   },
   {
-    id: 3,
+    id: 4,
     title: "Ecosim",
     description:
       "Ecosim is a Java-based interactive simulation between animals, plants, and environments across desert and grassland biomes. Users can configure setups and monitor real-time evolution through daily reports. Built with Maven, modular architecture using Builder and Observer patterns, JSON-configured biomes/weather, and comprehensive unit tests, with easy launch scripts.",
@@ -42,7 +51,7 @@ export const projects = [
     demoLink: "https://github.com/darragh0/ecosim",
   },
   {
-    id: 4,
+    id: 5,
     title: "Fuzzle",
     description:
       "Fuzzle is a cross-platform mobile app that helps parents track their children's study habits, connected to a Raspberry Pi-based physical \"pet cat\" device that indicates focus vs. distraction. Built with Flutter (and a React Native version), includes Bluetooth pairing, data storage, tests, code quality checks, accessibility, and launch scripts for Linux/Windows/Android.",
@@ -51,7 +60,7 @@ export const projects = [
     demoLink: "https://github.com/jjola00/Fuzzle",
   },
   {
-    id: 5,
+    id: 6,
     title: "Zork",
     description:
       "Zork is a text-based adventure game inspired by The House in Fata Morgana with a GUI and custom artwork. Updated with build scripts and docs for modern systems while preserving original code as a snapshot. Built in C++ using Qt with quick-launch scripts for Linux/macOS and Windows.",
@@ -60,7 +69,7 @@ export const projects = [
     demoLink: "https://github.com/jjola00/FinalZork",
   },
   {
-    id: 6,
+    id: 7,
     title: "Leet Code Adventures",
     description:
       "An ongoing diary capturing LeetCode attempts and enhanced solutions, organized by topics like two pointers and binary search. Initially in C++, now in Python. Inspired by prep for AWS SDE Interview and future internships.",
@@ -70,14 +79,14 @@ export const projects = [
   },
 ];
 
-// Helper function to get featured project (StableWise)
+// Helper function to get featured project (Beetlehead Designs)
 export const getFeaturedProject = () => {
-  return projects.find(project => project.title === "StableWise");
+  return projects.find(project => project.title === "Beetlehead Designs");
 };
 
 // Helper function to get all projects except the featured one
 export const getOtherProjects = () => {
-  return projects.filter(project => project.title !== "StableWise");
+  return projects.filter(project => project.title !== "Beetlehead Designs");
 };
 
 // Helper function to get all projects
