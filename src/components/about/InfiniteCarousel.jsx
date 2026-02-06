@@ -1,14 +1,24 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const InfiniteCarousel = ({ items, direction = 'left', speed = 20 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(null);
+  const [isInView, setIsInView] = useState(false);
+  const carouselRef = useRef(null);
 
-  // Create multiple copies of items for seamless loop (like music section)
-  const extendedItems = [...items, ...items, ...items, ...items]; // 4 copies for very long carousel
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (carouselRef.current) observer.observe(carouselRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const extendedItems = [...items, ...items];
   
   const animationClass = direction === 'left' ? 'animate-scroll-left' : 'animate-scroll-right';
   const animationDuration = `${speed}s`;
@@ -19,14 +29,15 @@ const InfiniteCarousel = ({ items, direction = 'left', speed = 20 }) => {
   };
 
   return (
-    <div 
+    <div
+      ref={carouselRef}
       className="w-full overflow-hidden relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div 
-        className={`flex items-center gap-4 sm:gap-6 md:gap-8 ${animationClass} ${isHovered ? 'paused' : ''}`}
-        style={{ 
+      <div
+        className={`flex items-center gap-4 sm:gap-6 md:gap-8 ${animationClass} ${isHovered || !isInView ? 'paused' : ''}`}
+        style={{
           animationDuration,
           width: 'fit-content'
         }}

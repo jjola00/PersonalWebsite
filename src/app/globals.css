@@ -404,11 +404,11 @@
  animations */
 @keyframes scroll-left {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-25%); }
+  100% { transform: translateX(-50%); }
 }
 
 @keyframes scroll-right {
-  0% { transform: translateX(-25%); }
+  0% { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
 
@@ -434,3 +434,16 @@
 .paused {
   animation-play-state: paused;
 }
+
+/* Reduce animations on mobile for better performance */
+@media (max-width: 768px) {
+  .animate-scroll-left,
+  .animate-scroll-right {
+    animation-duration: 30s !important; /* Slower = less GPU work */
+  }
+
+  .animate-float {
+    animation-duration: 5s; /* Slower float */
+  }
+}
+

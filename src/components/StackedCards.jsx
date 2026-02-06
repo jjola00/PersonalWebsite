@@ -214,7 +214,6 @@ const StackedCards = ({
                       height: responsiveHeight || posterHeight,
                     }}
                     loading="lazy"
-                    unoptimized // For external movie poster URLs
                   />
                 ) : (
                   <div

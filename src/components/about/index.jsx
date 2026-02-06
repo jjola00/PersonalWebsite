@@ -2,7 +2,6 @@ import ItemLayout from "./ItemLayout";
 import Image from "next/image";
 import MusicSection from "./MusicSection";
 import MovieSection from "./MovieSection";
-import InfiniteCarousel from "./InfiniteCarousel";
 import ProjectCard from "./ProjectCard";
 import { getAllProjects } from "../../data/projects";
 
@@ -35,13 +34,24 @@ const AboutDetails = () => {
   
   return (
     <section className="w-full bg-gradient-to-r ">
-      {/* Technology Carousel - ABOVE intro */}
+      {/* Technologies */}
       <div className="mb-8 sm:mb-12">
-        <InfiniteCarousel 
-          items={technologyLogos} 
-          direction="left"
-          speed={20}
-        />
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10">
+          {technologyLogos.map((item) => (
+            <div key={item.name} className="group relative flex flex-col items-center">
+              <Image
+                src={item.logo}
+                alt={item.alt}
+                width={80}
+                height={80}
+                className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-cover object-center rounded-lg filter grayscale group-hover:grayscale-0 transition-all duration-300 ease-in-out group-hover:scale-110"
+              />
+              <span className="mt-2 text-xs sm:text-sm text-white/0 group-hover:text-white transition-all duration-300 font-medium">
+                {item.name}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
       
       <div className="grid grid-cols-12 gap-4 xs:gap-6  md:gap-8 w-full">
@@ -79,13 +89,24 @@ const AboutDetails = () => {
         </ItemLayout>
       </div>
 
-      {/* Company Carousel - BELOW intro section */}
+      {/* Companies */}
       <div className="mt-8 sm:mt-12 mb-8 sm:mb-12">
-        <InfiniteCarousel 
-          items={companyLogos} 
-          direction="right"
-          speed={18}
-        />
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10">
+          {companyLogos.map((item) => (
+            <div key={item.name} className="group relative flex flex-col items-center">
+              <Image
+                src={item.logo}
+                alt={item.alt}
+                width={80}
+                height={80}
+                className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-cover object-center rounded-lg filter grayscale group-hover:grayscale-0 transition-all duration-300 ease-in-out group-hover:scale-110"
+              />
+              <span className="mt-2 text-xs sm:text-sm text-white/0 group-hover:text-white transition-all duration-300 font-medium">
+                {item.name}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-12 gap-4 xs:gap-6  md:gap-8 w-full">

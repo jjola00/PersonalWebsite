@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useMobileNavigation } from '@/contexts/MobileNavigationContext';
 import { cleanMovieData, cleanTitle } from '@/utils/titleCleaner';
+import { getCached, setCache } from '@/utils/cache';
 
 // Dynamic import for StackedCards component to reduce initial bundle size
 const StackedCards = dynamic(() => import('@/components/StackedCards'), {
@@ -37,11 +38,15 @@ const MovieSection = () => {
   }, []);
 
   const loadWatchlistMovies = async () => {
+    const cached = getCached('watchlist');
+    if (cached) { setWatchlistMovies(cached); return; }
+
     try {
       const response = await fetch('/api/letterboxd/watchlist?limit=50');
       const watchlistData = await response.json();
       if (watchlistData.success) {
         setWatchlistMovies(watchlistData.data);
+        setCache('watchlist', watchlistData.data);
       }
     } catch (err) {
       console.error('Error loading watchlist movies:', err);
@@ -49,13 +54,15 @@ const MovieSection = () => {
   };
 
   const loadMovieData = async () => {
+    const cached = getCached('movieData');
+    if (cached) { setMovieData(cached); setLoading(false); return; }
+
     setLoading(true);
 
     try {
-      // Fetch data with higher limits
       const [diaryRes, fiveStarRes, randomRes, listsRes] = await Promise.all([
         fetch('/api/letterboxd/diary?limit=10'),
-        fetch('/api/letterboxd/five-star-movies?limit=15'), // Get all five-star movies
+        fetch('/api/letterboxd/five-star-movies?limit=15'),
         fetch('/api/letterboxd/watchlist-random'),
         fetch('/api/letterboxd/lists')
       ]);
@@ -74,12 +81,10 @@ const MovieSection = () => {
         lists
       };
 
-      // Apply title cleaning to all movie data
       const cleanedMovieData = cleanMovieData(movieDataObject);
 
-
-
       setMovieData(cleanedMovieData);
+      setCache('movieData', cleanedMovieData);
     } catch (err) {
       console.error('Error loading movie data:', err);
     } finally {
