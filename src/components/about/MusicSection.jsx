@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getCurrentlyPlaying, getUserProfile, getTopArtists as getSpotifyTopArtists, getTopTracks as getSpotifyTopTracks } from '@/services/spotify';
 import { getCurrentTrack, getTopArtists as getLastfmTopArtists, getTopTracks as getLastfmTopTracks, fetchLastFmData } from '@/services/lastfm';
 import { useMobileNavigation } from '@/contexts/MobileNavigationContext';
+import { getCached, setCache } from '@/utils/cache';
 
 const TIME_PERIODS = {
   '7day': 'Last 7 Days',
@@ -23,8 +24,20 @@ const MusicSection = () => {
   const [lastfmStats, setLastfmStats] = useState({ topArtist: null, topTrack: null, topAlbum: null });
   const [selectedPeriod, setSelectedPeriod] = useState('overall');
   const [loading, setLoading] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef(null);
 
   const LASTFM_USERNAME = 'jjola0';
+
+  // Pause animations when section is out of view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     loadMusicData();
@@ -35,11 +48,20 @@ const MusicSection = () => {
   }, [selectedPeriod]);
 
   const loadMusicData = async () => {
+    const cached = getCached('musicData');
+    if (cached) {
+      setCurrentTrack(cached.currentTrack);
+      setUserProfile(cached.userProfile);
+      setTopArtists(cached.topArtists);
+      setTopTracks(cached.topTracks);
+      return;
+    }
+
     setLoading(true);
     try {
       const [spotifyTrack, profile, spotifyArtists, spotifyTracks] = await Promise.all([
         getCurrentlyPlaying(),
-        getUserProfile(), 
+        getUserProfile(),
         getSpotifyTopArtists('medium_term', 15),
         getSpotifyTopTracks('medium_term', 15)
       ]);
@@ -68,6 +90,12 @@ const MusicSection = () => {
 
       setTopArtists(displayArtists);
       setTopTracks(displayTracks);
+      setCache('musicData', {
+        currentTrack: displayTrack,
+        userProfile: profile,
+        topArtists: displayArtists,
+        topTracks: displayTracks
+      });
     } catch (error) {
       console.error('Error loading music data:', error);
     } finally {
@@ -76,6 +104,10 @@ const MusicSection = () => {
   };
 
   const loadLastfmStats = async () => {
+    const cacheKey = `lastfmStats-${selectedPeriod}`;
+    const cached = getCached(cacheKey);
+    if (cached) { setLastfmStats(cached); return; }
+
     try {
       const [artistsData, tracksData, albumsData] = await Promise.all([
         fetchLastFmData('user.getTopArtists', { user: LASTFM_USERNAME, period: selectedPeriod, limit: 1 }),
@@ -124,14 +156,16 @@ const MusicSection = () => {
         console.error('Error fetching top albums:', albumError);
       }
 
-      setLastfmStats({ topArtist, topTrack, topAlbum });
+      const stats = { topArtist, topTrack, topAlbum };
+      setLastfmStats(stats);
+      setCache(cacheKey, stats);
     } catch (err) {
       console.error('Error loading Last.fm stats:', err);
     }
   };
 
   return (
-    <div className="w-full h-auto container">
+    <div ref={sectionRef} className="w-full h-auto container">
       <style jsx>{`
         @keyframes scrollUp {
           0% {
@@ -151,9 +185,11 @@ const MusicSection = () => {
         }
         .animate-scroll-up {
           animation: scrollUp 20s linear infinite;
+          animation-play-state: ${isInView ? 'running' : 'paused'};
         }
         .animate-scroll-down {
           animation: scrollDown 20s linear infinite;
+          animation-play-state: ${isInView ? 'running' : 'paused'};
         }
       `}</style>
       
@@ -203,7 +239,7 @@ const MusicSection = () => {
           <div className="flex flex-col items-center justify-center">
             <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-52 md:h-52 lg:w-60 lg:h-60">
               {currentTrack?.image ? (
-                <div className={`w-full h-full rounded-full border-4 border-[#FEFE5B]/50 overflow-hidden ${currentTrack.isPlaying ? 'animate-spin' : ''}`} style={{animationDuration: '3s'}}>
+                <div className={`w-full h-full rounded-full border-4 border-[#FEFE5B]/50 overflow-hidden ${currentTrack.isPlaying && isInView ? 'animate-spin' : ''}`} style={{animationDuration: '3s'}}>
                   <img 
                     src={currentTrack.image} 
                     alt="Album art" 
