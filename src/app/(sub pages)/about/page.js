@@ -1,10 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import AboutDetails from "@/components/about";
-import AmbientBackground from "@/components/AmbientBackground";
-import BackgroundVideo from "@/components/BackgroundVideo";
 import BackgroundControls from "@/components/BackgroundControls";
 import { useBackground } from "@/components/BackgroundManager";
+
+const AmbientBackground = dynamic(() => import("@/components/AmbientBackground"), {
+  ssr: false,
+});
+
+const BackgroundVideo = dynamic(() => import("@/components/BackgroundVideo"), {
+  ssr: false,
+});
 
 export default function About() {
   const { mode, ambientEffect } = useBackground();

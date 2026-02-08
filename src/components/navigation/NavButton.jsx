@@ -86,7 +86,6 @@ const NavButton = ({
               className="text-foreground rounded-full flex items-center justify-center custom-bg focus-visible"
               aria-label={label}
               name={label}
-              prefetch={false}
               scroll={false}
               rel={newTab ? "noopener noreferrer" : undefined}
             >
@@ -114,7 +113,6 @@ const NavButton = ({
               )}
               aria-label={label}
               name={label}
-              prefetch={false}
               scroll={false}
               rel={newTab ? "noopener noreferrer" : undefined}
             >
