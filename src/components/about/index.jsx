@@ -1,9 +1,32 @@
 import ItemLayout from "./ItemLayout";
 import Image from "next/image";
-import MusicSection from "./MusicSection";
-import MovieSection from "./MovieSection";
+import dynamic from "next/dynamic";
 import ProjectCard from "./ProjectCard";
 import { getAllProjects } from "../../data/projects";
+
+const MusicSection = dynamic(() => import("./MusicSection"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-96 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-4xl mb-2">🎵</div>
+        <p className="text-gray-400 text-sm">Loading music...</p>
+      </div>
+    </div>
+  ),
+});
+
+const MovieSection = dynamic(() => import("./MovieSection"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-96 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-4xl mb-2">🎬</div>
+        <p className="text-gray-400 text-sm">Loading movies...</p>
+      </div>
+    </div>
+  ),
+});
 
 // Technology logos data
 const technologyLogos = [

@@ -42,7 +42,7 @@ const BackgroundControls = () => {
   return (
     <>
       {/* Top-left controls - moved from top-right to avoid blocking mobile navigation */}
-      <div className="fixed top-4 left-4 md:top-6 md:left-6 z-40 flex flex-col sm:flex-row gap-2">
+      <div className="fixed top-4 left-20 md:top-6 md:left-24 z-40 flex flex-col sm:flex-row gap-2">
         {mode === 'ambient' ? (
           // Hide "My Wallpapers" button on mobile devices (≤768px)
           !isMobile && (
