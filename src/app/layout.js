@@ -20,7 +20,7 @@ export const metadata = {
     default: "Jay",
   },
   description:
-    "My personal website and portfolio, showcasing my projects and blog posts theme based on my favorite anime.",
+    "Le personal website.",
   icons: {
     icon: '/pfp.png',
   },
