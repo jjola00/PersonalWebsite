@@ -142,15 +142,17 @@ const AboutDetails = () => {
             key={pin.repo}
             className={"col-span-full sm:col-span-6 md:col-span-4 !p-0"}
           >
-            <Image
-              className="w-full h-auto"
-              src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/pin/?username=jjola00&repo=${pin.repo}&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B`}
-              alt={pin.alt}
-              width={400}
-              height={150}
-              loading="lazy"
-              unoptimized
-            />
+            <a href={`https://github.com/jjola00/${pin.repo}`} target="_blank" rel="noopener noreferrer" className="w-full">
+              <Image
+                className="w-full h-auto hover:opacity-80 transition-opacity"
+                src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/pin/?username=jjola00&repo=${pin.repo}&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B`}
+                alt={pin.alt}
+                width={400}
+                height={150}
+                loading="lazy"
+                unoptimized
+              />
+            </a>
           </ItemLayout>
         ))}
 
@@ -166,7 +168,7 @@ const AboutDetails = () => {
           />
         </ItemLayout>
 
-        <ItemLayout className={"col-span-full md:col-span-4 !p-0 items-start"}>
+        <ItemLayout className={"col-span-full md:col-span-4 !p-0"}>
           <Image
             className="w-full h-auto"
             src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/top-langs?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&layout=compact&langs_count=8&size_weight=0.5&count_weight=0.5`}
