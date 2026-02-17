@@ -133,35 +133,37 @@ const AboutDetails = () => {
       </div>
 
       <div className="grid grid-cols-12 gap-4 xs:gap-6  md:gap-8 w-full">
-        <ItemLayout
-          className={"col-span-full sm:col-span-6 md:col-span-4 !p-0"}
-        >
-          <Image
-            className="w-full h-auto"
-            src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/top-langs?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&text_bold=false`}
-            alt="GitHub Top Languages"
-            width={400}
-            height={300}
-            loading="lazy"
-            unoptimized
-          />
-        </ItemLayout>
-
-        <ItemLayout className={"col-span-full md:col-span-8 !p-0"}>
-          <div className="relative">
+        {[
+          { repo: "LinuxConfig", alt: "LinuxConfig Repo" },
+          { repo: "FinalZork", alt: "FinalZork Repo" },
+          { repo: "amyWeb", alt: "amyWeb Repo" },
+        ].map((pin) => (
+          <ItemLayout
+            key={pin.repo}
+            className={"col-span-full sm:col-span-6 md:col-span-4 !p-0"}
+          >
             <Image
               className="w-full h-auto"
-              src={`https://github-readme-activity-graph.vercel.app/graph?username=jjola00&theme=react-dark&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&line=FEFE5B&point=FFFFFF&area=true&area_color=1F2937`}
-              alt="GitHub Activity Graph"
-              width={800}
-              height={300}
+              src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/pin/?username=jjola00&repo=${pin.repo}&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B`}
+              alt={pin.alt}
+              width={400}
+              height={150}
               loading="lazy"
               unoptimized
             />
-            <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded text-xs font-medium">
-              Last 30 Days
-            </div>
-          </div>
+          </ItemLayout>
+        ))}
+
+        <ItemLayout className={"col-span-full !p-0"}>
+          <Image
+            className="w-full h-auto"
+            src="https://ghchart.rshah.org/FEFE5B/jjola00"
+            alt="GitHub Contribution Heatmap"
+            width={800}
+            height={120}
+            loading="lazy"
+            unoptimized
+          />
         </ItemLayout>
 
         <ItemLayout className={"col-span-full"}>
