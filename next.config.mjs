@@ -35,10 +35,6 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'lastfm.freetls.fastly.net'
             },
-            {
-                protocol: 'https',
-                hostname: 'ghchart.rshah.org'
-            }
         ],
         formats: ['image/webp', 'image/avif'],
         minimumCacheTTL: 60,

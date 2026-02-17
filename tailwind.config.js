@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily:{
-        inter: ['var(--font-inter)']
+        ubuntu: ['var(--font-ubuntu)', "'Segoe UI'", 'Ubuntu', 'sans-serif']
       },
       colors:{
         background: 'rgb(var(--background))',
