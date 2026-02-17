@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
 import { BackgroundProvider } from "@/components/BackgroundManager";
@@ -9,9 +9,10 @@ import ClientWebVitalsTracker from "@/components/ClientWebVitalsTracker";
 // Import global error handler (initializes on import)
 import "@/utils/errorHandler";
 
-const inter = Inter({
+const ubuntu = Ubuntu({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-ubuntu",
 });
 
 export const metadata = {
@@ -34,8 +35,8 @@ export default function RootLayout({ children }) {
       </head>
       <body
         className={clsx(
-          inter.variable,
-          "bg-background text-foreground font-inter"
+          ubuntu.variable,
+          "bg-background text-foreground font-ubuntu"
         )}
       >
         <MobileNavigationProvider>
