@@ -154,7 +154,7 @@ const AboutDetails = () => {
           </ItemLayout>
         ))}
 
-        <ItemLayout className={"col-span-full md:col-span-8 !p-0"}>
+        <ItemLayout className={"col-span-full md:col-span-8 !p-0 items-start"}>
           <Image
             className="w-full h-auto"
             src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&show_icons=true&rank_icon=github`}
@@ -166,10 +166,10 @@ const AboutDetails = () => {
           />
         </ItemLayout>
 
-        <ItemLayout className={"col-span-full md:col-span-4 !p-0"}>
+        <ItemLayout className={"col-span-full md:col-span-4 !p-0 items-start"}>
           <Image
             className="w-full h-auto"
-            src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/top-langs?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&layout=compact&langs_count=8`}
+            src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/top-langs?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&layout=compact&langs_count=8&size_weight=0.5&count_weight=0.5`}
             alt="Top Languages"
             width={400}
             height={200}
