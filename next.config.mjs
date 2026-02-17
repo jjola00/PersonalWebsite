@@ -21,10 +21,6 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'github-readme-activity-graph.vercel.app'
-            },
-            {
-                protocol: 'https',
                 hostname: 'image.tmdb.org'
             },
             {
@@ -38,6 +34,10 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'lastfm.freetls.fastly.net'
+            },
+            {
+                protocol: 'https',
+                hostname: 'ghchart.rshah.org'
             }
         ],
         formats: ['image/webp', 'image/avif'],
