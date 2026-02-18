@@ -50,6 +50,17 @@ const companyLogos = [
   { name: 'DevEire', logo: '/experience/Deveire.jpeg', alt: 'DevEire' }
 ];
 
+const topLanguages = [
+  { name: 'Python', percentage: 43.12, color: '#3B82F6' },
+  { name: 'TypeScript', percentage: 23.08, color: '#1D4ED8' },
+  { name: 'JavaScript', percentage: 13.89, color: '#FEFE5B' },
+  { name: 'C++', percentage: 5.76, color: '#F43F7D' },
+  { name: 'HTML', percentage: 4.61, color: '#F97316' },
+  { name: 'CSS', percentage: 3.86, color: '#7E22CE' },
+  { name: 'C', percentage: 2.87, color: '#6B7280' },
+  { name: 'Jupyter Notebook', percentage: 2.81, color: '#EA580C' }
+];
+
 // Projects data is now imported from centralized data file
 
 const AboutDetails = () => {
@@ -156,7 +167,7 @@ const AboutDetails = () => {
           </ItemLayout>
         ))}
 
-        <ItemLayout className={"col-span-full md:col-span-8 !p-0 items-start"}>
+        <ItemLayout className={"col-span-full md:col-span-7 !p-0 items-start justify-start self-start"}>
           <Image
             className="w-full h-auto"
             src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&show_icons=true&rank_icon=github`}
@@ -168,16 +179,46 @@ const AboutDetails = () => {
           />
         </ItemLayout>
 
-        <ItemLayout className={"col-span-full md:col-span-4 !p-0"}>
-          <Image
-            className="w-full h-auto"
-            src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/top-langs?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&layout=compact&langs_count=8&size_weight=0.5&count_weight=0.5`}
-            alt="Top Languages"
-            width={400}
-            height={200}
-            loading="lazy"
-            unoptimized
-          />
+        <ItemLayout className={"col-span-full md:col-span-5 !p-5 sm:!p-6 items-start justify-start overflow-hidden self-stretch h-full"}>
+          <div className="w-full h-full flex flex-col gap-4">
+            <h3 className="text-2xl sm:text-4xl font-semibold leading-tight" style={{ color: '#FEFE5B' }}>
+              Most Used Languages
+            </h3>
+
+            <div className="w-full h-3 rounded-full overflow-hidden bg-white/20 flex">
+              {topLanguages.map((language) => (
+                <div
+                  key={language.name}
+                  className="h-full"
+                  style={{ width: `${language.percentage}%`, backgroundColor: language.color }}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1 auto-rows-fr">
+              {topLanguages.map((language, index) => (
+                <div
+                  key={language.name}
+                  className={`min-w-0 h-full rounded-md px-3 py-2 flex items-center justify-between ${
+                    index % 2 === 0 ? 'bg-white/10' : 'bg-white/5'
+                  }`}
+                >
+                  <span className="min-w-0 pr-2 flex items-center gap-2">
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ backgroundColor: language.color }}
+                      aria-hidden="true"
+                    />
+                    <span className="truncate text-sm sm:text-base">{language.name}</span>
+                  </span>
+                  <span className="shrink-0 text-sm sm:text-base font-medium">
+                    {language.percentage.toFixed(2)}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </ItemLayout>
 
         <ItemLayout className={"col-span-full"}>
