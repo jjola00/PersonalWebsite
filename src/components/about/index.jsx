@@ -43,6 +43,7 @@ const technologyLogos = [
 // Company logos data
 const companyLogos = [
   { name: 'ISE', logo: '/experience/ISE.jpeg', alt: 'ISE' },
+  { name: 'Transact Campus', logo: '/experience/Transact_Campus.png', alt: 'Transact Campus' },
   { name: 'Puzz', logo: '/experience/Puzz.jpeg', alt: 'Puzz' },
   { name: 'Patch', logo: '/experience/Patch.jpeg', alt: 'Patch' },
   { name: 'Dogpatch Labs', logo: '/experience/Dogpatch_Labs.jpeg', alt: 'Dogpatch Labs' },
