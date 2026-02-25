@@ -45,6 +45,16 @@ const nextConfig = {
     async headers() {
         return [
             {
+                // Cache wallpaper videos for 30 days
+                source: '/wallpapers/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=2592000, immutable'
+                    }
+                ]
+            },
+            {
                 // Apply security headers to all routes
                 source: '/(.*)',
                 headers: [

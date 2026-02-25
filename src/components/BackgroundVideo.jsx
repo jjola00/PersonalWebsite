@@ -8,162 +8,166 @@ const BackgroundVideo = forwardRef((props, ref) => {
   const { mode, customVideoIndex, nextVideo } = useBackground();
   const [activeVideo, setActiveVideo] = useState(0); // 0 or 1 for dual videos
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
+
   const video1Ref = useRef(null);
   const video2Ref = useRef(null);
   const intervalRef = useRef(null);
-  const preloadedVideos = useRef(new Set());
+  const loadedSrcs = useRef([null, null]); // Track what URL is loaded on each slot
+  const preloadCache = useRef(new Set()); // URLs already preloaded into browser cache
 
-  // Get current and next video URLs
   const currentVideoUrl = getCurrentWallpaper(customVideoIndex);
   const nextVideoUrl = getCurrentWallpaper((customVideoIndex + 1) % getWallpaperCount());
 
-  // Preload video function
-  const preloadVideo = useCallback((videoElement, url) => {
-    if (!videoElement || preloadedVideos.current.has(url)) return;
-    
-    videoElement.src = url;
-    videoElement.load();
-    
-    // Mark as preloaded when enough data is buffered
-    const handleCanPlay = () => {
-      preloadedVideos.current.add(url);
-      videoElement.removeEventListener('canplaythrough', handleCanPlay);
+  // Preload a video into browser cache via a temporary video element
+  const preloadIntoCache = useCallback((url) => {
+    if (preloadCache.current.has(url)) return;
+    preloadCache.current.add(url); // Mark immediately to avoid duplicate requests
+
+    const video = document.createElement('video');
+    video.preload = 'auto';
+    video.muted = true;
+    video.playsInline = true;
+    video.src = url;
+    video.load();
+
+    const onReady = () => {
+      video.removeEventListener('canplaythrough', onReady);
+      video.src = '';
+      video.load(); // Release element memory, data stays in browser cache
     };
-    
-    videoElement.addEventListener('canplaythrough', handleCanPlay);
+    video.addEventListener('canplaythrough', onReady);
+  }, []);
+
+  // Load a URL onto a video element only if it doesn't already have it
+  const loadOnElement = useCallback((element, slot, url) => {
+    if (!element || loadedSrcs.current[slot] === url) return;
+    element.src = url;
+    element.load();
+    loadedSrcs.current[slot] = url;
   }, []);
 
   // Smooth transition between videos
   const switchToNext = useCallback(() => {
     if (isTransitioning) return;
-    
     setIsTransitioning(true);
-    const nextActiveVideo = activeVideo === 0 ? 1 : 0;
-    const nextVideoElement = nextActiveVideo === 0 ? video1Ref.current : video2Ref.current;
-    
-    // Ensure next video is ready
-    if (nextVideoElement && nextVideoElement.readyState >= 3) {
-      // Start playing the next video
-      nextVideoElement.play().catch(console.error);
-      
-      // Crossfade transition
-      setTimeout(() => {
-        setActiveVideo(nextActiveVideo);
-        nextVideo();
-        
-        setTimeout(() => {
-          setIsTransitioning(false);
-        }, 300);
-      }, 50);
+
+    const nextSlot = activeVideo === 0 ? 1 : 0;
+    const nextEl = nextSlot === 0 ? video1Ref.current : video2Ref.current;
+
+    const doSwitch = () => {
+      if (nextEl) nextEl.play().catch(() => {});
+      setActiveVideo(nextSlot);
+      nextVideo();
+      setTimeout(() => setIsTransitioning(false), 300);
+    };
+
+    if (nextEl && nextEl.readyState >= 3) {
+      // Next video is buffered, switch immediately
+      doSwitch();
+    } else if (nextEl) {
+      // Wait for it to buffer, with a timeout fallback
+      const onReady = () => {
+        clearTimeout(timeout);
+        doSwitch();
+      };
+      nextEl.addEventListener('canplay', onReady, { once: true });
+
+      // Make sure it's actually loading
+      loadOnElement(nextEl, nextSlot, nextVideoUrl);
+
+      const timeout = setTimeout(() => {
+        nextEl.removeEventListener('canplay', onReady);
+        doSwitch();
+      }, 5000);
     } else {
-      // Fallback to immediate switch if preload failed
       nextVideo();
       setIsTransitioning(false);
     }
-  }, [activeVideo, nextVideo, isTransitioning]);
+  }, [activeVideo, nextVideo, isTransitioning, nextVideoUrl, loadOnElement]);
 
-  // Expose switchToNext function to parent component
-  useImperativeHandle(ref, () => ({
-    switchToNext
-  }));
+  useImperativeHandle(ref, () => ({ switchToNext }));
 
-  // Setup auto-switching
+  // Auto-switch interval (only when in custom mode)
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      switchToNext();
-    }, 60000);
+    if (mode !== 'custom') return;
+    intervalRef.current = setInterval(switchToNext, 60000);
+    return () => clearInterval(intervalRef.current);
+  }, [switchToNext, mode]);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [switchToNext]);
-
-  // Preload and setup videos when index changes
+  // Load current video + preload next when entering custom mode or index changes
   useEffect(() => {
     if (mode !== 'custom') return;
 
-    const currentVideoElement = activeVideo === 0 ? video1Ref.current : video2Ref.current;
-    const nextVideoElement = activeVideo === 0 ? video2Ref.current : video1Ref.current;
+    const currentEl = activeVideo === 0 ? video1Ref.current : video2Ref.current;
+    const nextEl = activeVideo === 0 ? video2Ref.current : video1Ref.current;
+    const nextSlot = activeVideo === 0 ? 1 : 0;
 
-    // Setup current video
-    if (currentVideoElement) {
-      currentVideoElement.src = currentVideoUrl;
-      currentVideoElement.load();
-      currentVideoElement.play().catch(console.error);
-    }
+    // Load current video (skips if already loaded with this URL)
+    loadOnElement(currentEl, activeVideo, currentVideoUrl);
+    if (currentEl) currentEl.play().catch(() => {});
 
-    // Preload next video
-    if (nextVideoElement) {
-      preloadVideo(nextVideoElement, nextVideoUrl);
-    }
-  }, [customVideoIndex, activeVideo, mode, currentVideoUrl, nextVideoUrl, preloadVideo]);
+    // Preload next video onto the inactive element
+    loadOnElement(nextEl, nextSlot, nextVideoUrl);
+  }, [customVideoIndex, activeVideo, mode, currentVideoUrl, nextVideoUrl, loadOnElement]);
 
-  // Preload additional videos for smoother experience
+  // Preload 2-3 videos ahead via hidden temporary elements
   useEffect(() => {
     if (mode !== 'custom') return;
 
-    // Preload next 2-3 videos in background
-    const preloadQueue = [];
-    for (let i = 1; i <= 3; i++) {
-      const futureIndex = (customVideoIndex + i) % getWallpaperCount();
-      const futureUrl = getCurrentWallpaper(futureIndex);
-      if (!preloadedVideos.current.has(futureUrl)) {
-        preloadQueue.push(futureUrl);
-      }
+    for (let i = 2; i <= 3; i++) {
+      const idx = (customVideoIndex + i) % getWallpaperCount();
+      preloadIntoCache(getCurrentWallpaper(idx));
     }
+  }, [customVideoIndex, mode, preloadIntoCache]);
 
-    // Stagger preloading to avoid overwhelming the network
-    preloadQueue.forEach((url, index) => {
-      setTimeout(() => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'video';
-        link.href = url;
-        document.head.appendChild(link);
-      }, index * 1000);
-    });
-  }, [customVideoIndex, mode]);
+  // When in ambient mode, preload the first wallpaper so switching to custom is instant
+  useEffect(() => {
+    if (mode === 'custom') return;
 
-  // Only render when in custom mode
-  if (mode !== 'custom') {
-    return null;
-  }
+    // Preload into browser cache
+    preloadIntoCache(currentVideoUrl);
 
+    // Also load directly onto video1 element so it's ready to play immediately
+    const el = video1Ref.current;
+    if (el) loadOnElement(el, 0, currentVideoUrl);
+  }, [mode, currentVideoUrl, preloadIntoCache, loadOnElement]);
+
+  // Pause videos when leaving custom mode to save resources
+  useEffect(() => {
+    if (mode !== 'custom') {
+      video1Ref.current?.pause();
+      video2Ref.current?.pause();
+    }
+  }, [mode]);
+
+  const isCustom = mode === 'custom';
+
+  // Always render video elements (never unmount) so they retain buffered data
   return (
     <>
-      {/* Video 1 */}
       <video
         ref={video1Ref}
         className={`
           fixed top-0 left-0 w-full h-full object-cover -z-50
           transition-opacity duration-300 ease-in-out
-          ${activeVideo === 0 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
+          ${isCustom && activeVideo === 0 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
         `}
-        autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        onError={(e) => console.error('Video 1 load error:', e)}
       />
-      
-      {/* Video 2 */}
       <video
         ref={video2Ref}
         className={`
           fixed top-0 left-0 w-full h-full object-cover -z-50
           transition-opacity duration-300 ease-in-out
-          ${activeVideo === 1 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
+          ${isCustom && activeVideo === 1 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
         `}
-        autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        onError={(e) => console.error('Video 2 load error:', e)}
       />
     </>
   );
