@@ -148,7 +148,7 @@ const BackgroundVideo = forwardRef((props, ref) => {
       <video
         ref={video1Ref}
         className={`
-          fixed top-0 left-0 w-full h-full object-cover -z-50
+          fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
           transition-opacity duration-300 ease-in-out
           ${isCustom && activeVideo === 0 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
         `}
@@ -160,7 +160,7 @@ const BackgroundVideo = forwardRef((props, ref) => {
       <video
         ref={video2Ref}
         className={`
-          fixed top-0 left-0 w-full h-full object-cover -z-50
+          fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
           transition-opacity duration-300 ease-in-out
           ${isCustom && activeVideo === 1 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
         `}
