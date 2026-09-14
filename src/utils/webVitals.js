@@ -4,6 +4,7 @@ import { onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
 function sendToAnalytics(metric) {
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console -- dev-only diagnostics
     console.log('Web Vital:', metric);
   }
   
@@ -60,15 +61,14 @@ export function logBundleInfo() {
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
     // Log initial bundle size info
     const scripts = document.querySelectorAll('script[src*="_next/static"]');
-    let totalSize = 0;
-    
+
     scripts.forEach(script => {
       if (script.src) {
         fetch(script.src, { method: 'HEAD' })
           .then(response => {
             const size = response.headers.get('content-length');
             if (size) {
-              totalSize += parseInt(size);
+              // eslint-disable-next-line no-console -- dev-only diagnostics
               console.log(`Script: ${script.src.split('/').pop()} - ${(size / 1024).toFixed(2)}KB`);
             }
           })

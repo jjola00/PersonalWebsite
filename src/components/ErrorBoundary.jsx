@@ -4,23 +4,9 @@ import React from 'react';
 
 // Error logging utility
 const logError = (error, errorInfo, componentName) => {
-  const errorData = {
-    message: error.message,
-    stack: error.stack,
-    componentStack: errorInfo.componentStack,
-    timestamp: new Date().toISOString(),
-    userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
-    url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-    componentName
-  };
-
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
-    console.group('🚨 Error Boundary Caught Error');
-    console.error('Error:', error);
-    console.error('Error Info:', errorInfo);
-    console.error('Component:', componentName);
-    console.groupEnd();
+    console.error('🚨 Error Boundary caught an error in', componentName, error, errorInfo);
   }
 
   // In production, you could send to error reporting service
@@ -33,7 +19,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI
     return { hasError: true };
   }

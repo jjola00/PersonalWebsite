@@ -2,63 +2,21 @@ CONCERNS BACKLOG
 Open items from the 2026-09-08 audit.
 
 --------------------------------------------------------------------------------
-1. LINT IS RED AND SWITCHED OFF                                      [quality]
+1. GIT HISTORY REWRITE -- HANDLE SEPARATELY                        [ops / cost]
 --------------------------------------------------------------------------------
-next.config.mjs:5  eslint.ignoreDuringBuilds: true
-`npx next lint` -> ~25 errors, ~50 warnings. Nothing enforces .eslintrc.json.
-Highlights:
-  - 10x <img> instead of next/image in MusicSection + MusicSection_responsive
-  - missing hook deps: StackedCards.jsx:53, MusicSection.jsx:44,48
-  - unescaped entities: StackedCards.jsx:347, projects/page.js:227
-  - many unused vars
-Also: `next lint` itself is deprecated and goes away in Next 16.
+.git is ~984 MB. ~766 MB of that is 35 blobs that exist only in old commits:
+superseded wallpaper versions (e.g. a 75 MB SpiderMan.mp4) plus every version of
+the now-deleted public/models and public/audio files.
+
+Plan when ready: run git filter-repo --strip-blobs-with-ids in a fresh clone (never
+in the working repo -- it resets the working tree), verify HEAD is unchanged, then
+force-push main. Destructive: rewrites every commit hash; any other clone must
+re-clone. Commit outstanding work first.
+
+Decided: wallpapers stay in git. temp branch deleted (local + GitHub).
 
 --------------------------------------------------------------------------------
-2. REPO WEIGHT                                                   [ops / cost]
---------------------------------------------------------------------------------
-.git                 984 MB
-public/wallpapers    237 MB  (18 tracked .mp4)
-public/models         38 MB  (4 .glb -- ZERO references anywhere in src/)
-
-public/models is pure dead weight -- safe to delete outright.
-Wallpapers likely want external hosting / a CDN rather than git.
-Shrinking .git requires a history rewrite (force-push); decide if worth it.
-
---------------------------------------------------------------------------------
-3. DEAD CODE -- ~2,870 LINES NEVER IMPORTED                       [quality]
---------------------------------------------------------------------------------
-Entire unused movie-service layer (API routes use utils/rssParser directly):
-  src/services/index.js              198
-  src/services/dataMerger.js         330
-  src/services/letterboxdService.js  234
-  src/services/cacheService.js       382
-  src/services/tmdbService.js        309   (only imported by dataMerger)
-
-Unused components / utils:
-  src/components/HorizontalScroller.jsx        550
-  src/components/about/MusicSection_responsive.jsx  301
-  src/components/about/InfiniteCarousel.jsx     87
-  src/components/ExternalLinks.jsx              96
-  src/components/withErrorBoundary.jsx          29
-  src/components/ResponsiveProvider.jsx         21
-  src/utils/performance.js                     159
-  src/utils/duplicateFilter.js                 174
-  src/components/about/MusicSection_backup.jsx   0  (empty file)
-  (MusicSection_responsive.jsx also imports Spotify helpers that no longer exist.)
-
-Also orphaned: public/effects/*.html (5 files) -- AmbientBackground builds that
-HTML inline via srcDoc instead.
-
---------------------------------------------------------------------------------
-4. SECURITY ADVISORIES                                            [security]
---------------------------------------------------------------------------------
-4 high severity, both transitive:
-  postcss <=8.5.22  (XSS via unescaped </style>; sourceMappingURL file reads)
-  sharp   <0.35.0   (libvips CVE-2026-33327/33328/35590/35591)
-`npm audit fix` claims to resolve both. Verify the build after.
-
---------------------------------------------------------------------------------
-5. /about SSRs ITS CONTROLS, THE OTHER PAGES DO NOT              [consistency]
+2. /about SSRs ITS CONTROLS, THE OTHER PAGES DO NOT              [consistency]
 --------------------------------------------------------------------------------
 src/app/(sub pages)/about/page.js:5 imports BackgroundControls directly.
 Home, contact and projects all use dynamic(..., { ssr: false }).
@@ -66,14 +24,14 @@ useScreenSize() defaults to width 1200 during SSR, so /about server-renders the
 desktop layout and can flash on mobile. Pick one approach.
 
 --------------------------------------------------------------------------------
-6. THE ONE TEST CANNOT RUN                                         [testing]
+3. THE ONE TEST CANNOT RUN                                         [testing]
 --------------------------------------------------------------------------------
 src/components/__tests__/StarRating.test.js uses jest + @testing-library/react.
 Neither is in package.json. There is no `test` script.
 Either wire up a runner or drop the file.
 
 --------------------------------------------------------------------------------
-7. BackgroundVideo HAS NO ERROR HANDLING                        [robustness]
+4. BackgroundVideo HAS NO ERROR HANDLING                        [robustness]
 --------------------------------------------------------------------------------
 src/components/BackgroundVideo.jsx
 No onError on either <video>. A missing or corrupt file shows an empty

@@ -1,9 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Disable ESLint during builds to prevent build failures from linting errors
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
     images: {
         dangerouslyAllowSVG: true,
         remotePatterns: [

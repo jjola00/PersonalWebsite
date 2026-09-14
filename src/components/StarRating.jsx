@@ -46,7 +46,7 @@ const StarRating = ({
       {[...Array(fullStars)].map((_, i) => (
         <span 
           key={`full-${i}`} 
-          className={`${starSize} text-yellow-400`}
+          className={`${starSize} text-accent`}
           aria-hidden="true"
         >
           ★
@@ -60,7 +60,7 @@ const StarRating = ({
           className={`${starSize} relative text-gray-600`}
           aria-hidden="true"
         >
-          <span className="absolute inset-0 overflow-hidden w-1/2 text-yellow-400">
+          <span className="absolute inset-0 overflow-hidden w-1/2 text-accent">
             ★
           </span>
           ★

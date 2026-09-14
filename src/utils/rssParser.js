@@ -59,49 +59,6 @@ function extractXMLField(content, fieldName) {
 }
 
 /**
- * Convert XML DOM to JavaScript object
- * @param {Document|Element} xml - XML document or element
- * @returns {Object} JavaScript object representation
- */
-function xmlToObject(xml) {
-  let obj = {};
-  
-  if (xml.nodeType === 1) { // Element node
-    // Handle attributes
-    if (xml.attributes.length > 0) {
-      obj['@attributes'] = {};
-      for (let i = 0; i < xml.attributes.length; i++) {
-        const attribute = xml.attributes.item(i);
-        obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
-      }
-    }
-  } else if (xml.nodeType === 3) { // Text node
-    obj = xml.nodeValue.trim();
-  }
-  
-  // Handle child nodes
-  if (xml.hasChildNodes()) {
-    for (let i = 0; i < xml.childNodes.length; i++) {
-      const item = xml.childNodes.item(i);
-      const nodeName = item.nodeName;
-      
-      if (typeof obj[nodeName] === 'undefined') {
-        obj[nodeName] = xmlToObject(item);
-      } else {
-        if (typeof obj[nodeName].push === 'undefined') {
-          const old = obj[nodeName];
-          obj[nodeName] = [];
-          obj[nodeName].push(old);
-        }
-        obj[nodeName].push(xmlToObject(item));
-      }
-    }
-  }
-  
-  return obj;
-}
-
-/**
  * Extract movie data from Letterboxd diary RSS feed
  * @param {string} xmlString - Raw RSS XML string
  * @returns {Array} Array of diary entry objects

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { getSpotifyMusicData } from '@/services/spotify';
 import { getCurrentTrack, getTopArtists as getLastfmTopArtists, getTopTracks as getLastfmTopTracks, fetchLastFmData } from '@/services/lastfm';
 import { useMobileNavigation } from '@/contexts/MobileNavigationContext';
@@ -15,6 +16,9 @@ const TIME_PERIODS = {
   'overall': 'All Time'
 };
 
+const LASTFM_USERNAME = 'jjola0';
+const INITIAL_PERIOD = 'overall';
+
 const MusicSection = () => {
   const { isMobileMenuOpen } = useMobileNavigation();
   const [currentTrack, setCurrentTrack] = useState(null);
@@ -22,12 +26,9 @@ const MusicSection = () => {
   const [topArtists, setTopArtists] = useState([]);
   const [topTracks, setTopTracks] = useState([]);
   const [lastfmStats, setLastfmStats] = useState({ topArtist: null, topTrack: null, topAlbum: null });
-  const [selectedPeriod, setSelectedPeriod] = useState('overall');
-  const [loading, setLoading] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState(INITIAL_PERIOD);
   const [isInView, setIsInView] = useState(false);
   const sectionRef = useRef(null);
-
-  const LASTFM_USERNAME = 'jjola0';
 
   // Pause animations when section is out of view
   useEffect(() => {
@@ -39,15 +40,7 @@ const MusicSection = () => {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    loadMusicData();
-  }, []);
-
-  useEffect(() => {
-    loadLastfmStats();
-  }, [selectedPeriod]);
-
-  const loadMusicData = async () => {
+  const loadMusicData = useCallback(async () => {
     const cached = getCached('musicData');
     if (cached) {
       setCurrentTrack(cached.currentTrack);
@@ -57,7 +50,6 @@ const MusicSection = () => {
       return;
     }
 
-    setLoading(true);
     try {
       const {
         currentTrack: spotifyTrack,
@@ -79,12 +71,12 @@ const MusicSection = () => {
       let displayTracks = spotifyTracks || [];
 
       if (!spotifyArtists || spotifyArtists.length === 0) {
-        const lastfmArtists = await getLastfmTopArtists(LASTFM_USERNAME, selectedPeriod, 15);
+        const lastfmArtists = await getLastfmTopArtists(LASTFM_USERNAME, INITIAL_PERIOD, 15);
         displayArtists = lastfmArtists;
       }
 
       if (!spotifyTracks || spotifyTracks.length === 0) {
-        const lastfmTracks = await getLastfmTopTracks(LASTFM_USERNAME, selectedPeriod, 15);
+        const lastfmTracks = await getLastfmTopTracks(LASTFM_USERNAME, INITIAL_PERIOD, 15);
         displayTracks = lastfmTracks;
       }
 
@@ -98,12 +90,10 @@ const MusicSection = () => {
       });
     } catch (error) {
       console.error('Error loading music data:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, []);
 
-  const loadLastfmStats = async () => {
+  const loadLastfmStats = useCallback(async () => {
     const cacheKey = `lastfmStats-${selectedPeriod}`;
     const cached = getCached(cacheKey);
     if (cached) { setLastfmStats(cached); return; }
@@ -162,7 +152,15 @@ const MusicSection = () => {
     } catch (err) {
       console.error('Error loading Last.fm stats:', err);
     }
-  };
+  }, [selectedPeriod]);
+
+  useEffect(() => {
+    loadMusicData();
+  }, [loadMusicData]);
+
+  useEffect(() => {
+    loadLastfmStats();
+  }, [loadLastfmStats]);
 
   return (
     <div ref={sectionRef} className="w-full h-auto container">
@@ -201,11 +199,11 @@ const MusicSection = () => {
             <div className="animate-scroll-up" style={{ height: '300%' }}>
               {[...topArtists, ...topArtists, ...topArtists].map((artist, index) => (
                 <div key={`${artist.name}-${index}`} className="flex flex-col items-center p-1 mb-1 md:mb-1 rounded-lg hover:bg-white/5 transition-colors">
-                  <img 
-                    src={artist.image} 
-                    alt={artist.name} 
-                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full mb-1 object-cover" 
-                  />
+                  {artist.image ? (
+                    <Image src={artist.image} alt={artist.name} width={64} height={64} unoptimized className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full mb-1 object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full mb-1 object-cover bg-white/10" aria-hidden="true" />
+                  )}
                   <span className="text-[10px] sm:text-xs md:text-sm text-white text-center truncate w-full px-1 leading-tight">
                     {artist.name}
                   </span>
@@ -227,7 +225,7 @@ const MusicSection = () => {
             >
               <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 rounded-full overflow-hidden bg-background/30 hover:opacity-80 transition-opacity">
                 {userProfile?.image ? (
-                  <img src={userProfile.image} alt="Profile" className="w-full h-full object-cover" />
+                  <Image src={userProfile.image} alt="Profile" width={128} height={128} unoptimized className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-sm sm:text-lg md:text-3xl">👤</div>
                 )}
@@ -239,19 +237,15 @@ const MusicSection = () => {
           <div className="flex flex-col items-center justify-center">
             <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-52 md:h-52 lg:w-60 lg:h-60">
               {currentTrack?.image ? (
-                <div className={`w-full h-full rounded-full border-4 border-[#FEFE5B]/50 overflow-hidden ${currentTrack.isPlaying && isInView ? 'animate-spin' : ''}`} style={{animationDuration: '3s'}}>
-                  <img 
-                    src={currentTrack.image} 
-                    alt="Album art" 
-                    className="w-full h-full object-cover"
-                  />
+                <div className={`w-full h-full rounded-full border-4 border-accent/50 overflow-hidden ${currentTrack.isPlaying && isInView ? 'animate-spin' : ''}`} style={{animationDuration: '3s'}}>
+                  <Image src={currentTrack.image} alt="Album art" width={240} height={240} unoptimized className="w-full h-full object-cover" />
                   {/* Vinyl record center */}
                   <div className="absolute top-1/2 left-1/2 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-black rounded-full -translate-x-1/2 -translate-y-1/2 border-2 border-gray-600">
                     <div className="absolute top-1/2 left-1/2 w-2 h-2 sm:w-3 sm:h-3 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-gray-800 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full rounded-full border-4 border-[#FEFE5B]/50 bg-gradient-to-br from-[#FEFE5B]/20 to-[#FEFE5B]/40 flex items-center justify-center">
+                <div className="w-full h-full rounded-full border-4 border-accent/50 bg-gradient-to-br from-accent/20 to-accent/40 flex items-center justify-center">
                   <span className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl">🎵</span>
                 </div>
               )}
@@ -259,7 +253,7 @@ const MusicSection = () => {
             
             {/* Now Playing Info - BACK TO ORIGINAL SIZE */}
             <div className="text-center mt-4 max-w-full px-2">
-              <p className="text-xs sm:text-sm md:text-base" style={{color: '#FEFE5B'}}>
+              <p className="text-xs sm:text-sm md:text-base" style={{ color: 'rgb(var(--accent))' }}>
                 {currentTrack?.isPlaying ? 'Now Playing' : 'Last Played'}
               </p>
               <p className="text-sm sm:text-base md:text-lg font-semibold text-white truncate max-w-[180px] sm:max-w-[250px] mx-auto">
@@ -278,11 +272,11 @@ const MusicSection = () => {
             <div className="animate-scroll-down" style={{ height: '300%' }}>
               {[...topTracks, ...topTracks, ...topTracks].map((track, index) => (
                 <div key={`${track.name}-${index}`} className="flex flex-col items-center p-1 mb-1 md:mb-1 rounded-lg hover:bg-white/5 transition-colors">
-                  <img 
-                    src={track.image} 
-                    alt={track.name} 
-                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded mb-1 object-cover" 
-                  />
+                  {track.image ? (
+                    <Image src={track.image} alt={track.name} width={64} height={64} unoptimized className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded mb-1 object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded mb-1 object-cover bg-white/10" aria-hidden="true" />
+                  )}
                   <div className="text-center w-full px-1">
                     <p className="text-[10px] sm:text-xs md:text-sm text-white truncate leading-tight">{track.name}</p>
                     <p className="text-[8px] sm:text-[10px] md:text-xs text-gray-400 truncate leading-tight">{track.artist}</p>
@@ -301,30 +295,30 @@ const MusicSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 md:gap-12 text-center items-center mb-4 md:mb-6 w-full max-w-4xl">
           {/* Top Song */}
           <div className="order-2 sm:order-1">
-            <p className="text-responsive-lg font-semibold" style={{color: '#FEFE5B'}}>Top Song</p>
+            <p className="text-responsive-lg font-semibold" style={{ color: 'rgb(var(--accent))' }}>Top Song</p>
             <p className="text-responsive-md text-white truncate max-w-[200px] mx-auto">{lastfmStats.topTrack?.name || 'N/A'}</p>
-            <p className="text-responsive-sm" style={{color: '#FEFE5B'}}>{lastfmStats.topTrack?.playcount || 0} plays</p>
+            <p className="text-responsive-sm" style={{ color: 'rgb(var(--accent))' }}>{lastfmStats.topTrack?.playcount || 0} plays</p>
           </div>
           
           {/* Album - Featured in center */}
           <div className="flex flex-col items-center order-1 sm:order-2">
             <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded overflow-hidden bg-background/30 mb-3">
               {lastfmStats.topAlbum?.image ? (
-                <img src={lastfmStats.topAlbum.image} alt="Album" className="w-full h-full object-cover" />
+                <Image src={lastfmStats.topAlbum.image} alt="Album" width={160} height={160} unoptimized className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-2xl sm:text-4xl">💿</div>
               )}
             </div>
-            <p className="text-responsive-lg font-semibold" style={{color: '#FEFE5B'}}>Album</p>
+            <p className="text-responsive-lg font-semibold" style={{ color: 'rgb(var(--accent))' }}>Album</p>
             <p className="text-responsive-md text-white truncate max-w-[200px] mx-auto">{lastfmStats.topAlbum?.name || 'N/A'}</p>
-            <p className="text-responsive-sm" style={{color: '#FEFE5B'}}>{lastfmStats.topAlbum?.playcount || 0} plays</p>
+            <p className="text-responsive-sm" style={{ color: 'rgb(var(--accent))' }}>{lastfmStats.topAlbum?.playcount || 0} plays</p>
           </div>
 
           {/* Top Artist */}
           <div className="order-3">
-            <p className="text-responsive-lg font-semibold" style={{color: '#FEFE5B'}}>Top Artist</p>
+            <p className="text-responsive-lg font-semibold" style={{ color: 'rgb(var(--accent))' }}>Top Artist</p>
             <p className="text-responsive-md text-white truncate max-w-[200px] mx-auto">{lastfmStats.topArtist?.name || 'N/A'}</p>
-            <p className="text-responsive-sm" style={{color: '#FEFE5B'}}>{lastfmStats.topArtist?.playcount || 0} plays</p>
+            <p className="text-responsive-sm" style={{ color: 'rgb(var(--accent))' }}>{lastfmStats.topArtist?.playcount || 0} plays</p>
           </div>
         </div>
 
@@ -337,7 +331,7 @@ const MusicSection = () => {
                 onClick={() => setSelectedPeriod(key)}
                 className={`px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ease-out whitespace-nowrap ${
                   selectedPeriod === key
-                    ? 'bg-[#FEFE5B] text-black shadow-lg transform scale-105'
+                    ? 'bg-accent text-white shadow-lg transform scale-105'
                     : 'bg-white/10 text-white hover:bg-white/20 hover:scale-105'
                 }`}
               >

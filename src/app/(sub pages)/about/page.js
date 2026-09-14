@@ -28,15 +28,10 @@ export default function About() {
       {/* Background Controls */}
       <BackgroundControls />
 
-      <div className="relative w-full h-[100vh] flex flex-col items-center justify-center">
-        <div className="absolute flex flex-col items-center text-center top-1/2 sm:top-[60%] left-1/2 -translate-y-1/2 -translate-x-1/2">
-          <h1 className="font-bold  text-6xl xs:text-7xl sm:text-8xl  lg:text-9xl text-blue-100">
-            About Me
-          </h1>
-          <p className="font-light text-foreground text-lg mt-2">
-            Hey!
-          </p>
-        </div>
+      <div className="w-full flex flex-col items-center text-center mb-8">
+        <h1 className="font-bold text-4xl text-blue-100">
+          About Me
+        </h1>
       </div>
 
       <AboutDetails />

@@ -55,7 +55,7 @@ const NavButton = ({
   labelDirection = "right",
   isMobile = false,
 }) => {
-  const { width, isDesktop } = useResponsive();
+  const { isDesktop } = useResponsive();
   const [isClient, setIsClient] = React.useState(false);
   
   React.useEffect(() => {

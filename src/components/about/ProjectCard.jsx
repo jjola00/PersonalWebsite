@@ -15,7 +15,7 @@ const ProjectCard = ({ project }) => {
       case 'pre-seed':
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'on hold':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+        return 'bg-accent/20 text-accent border-accent/30';
       case 'in progress':
         return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
       default:
@@ -42,7 +42,7 @@ const ProjectCard = ({ project }) => {
       <div className="w-full md:w-1/2 p-4 md:p-6 flex flex-col justify-between">
         <div className="space-y-3 md:space-y-4">
           {/* Title */}
-          <h3 className="text-responsive-lg font-semibold" style={{color: '#FEFE5B'}}>
+          <h3 className="text-responsive-lg font-semibold" style={{ color: 'rgb(var(--accent))' }}>
             {project.title}
           </h3>
 

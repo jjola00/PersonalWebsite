@@ -12,7 +12,7 @@ const StackedCards = dynamic(() => import('@/components/StackedCards'), {
   loading: () => (
     <div className="w-full h-80 flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400 mx-auto mb-2"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-2"></div>
         <p className="text-gray-400 text-sm">Loading movies...</p>
       </div>
     </div>
@@ -96,7 +96,6 @@ const MovieSection = () => {
     if (watchlistMovies.length === 0) return;
 
     const shuffledMovies = [...watchlistMovies].sort(() => Math.random() - 0.5);
-    const cycleDuration = 2000; // 2 seconds total
     const totalCycles = 15; // Number of movies to cycle through
 
     for (let i = 0; i < totalCycles; i++) {
@@ -176,7 +175,7 @@ const MovieSection = () => {
           href="https://letterboxd.com/jjola00/"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg hover:bg-white/20 hover:border-yellow-400/50 hover:text-yellow-400 transition-all duration-300 text-sm font-medium"
+          className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg hover:bg-white/20 hover:border-accent/50 hover:text-accent transition-all duration-300 text-sm font-medium"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -195,7 +194,7 @@ const MovieSection = () => {
           <div className="block lg:hidden space-y-6">
             {/* My Diary */}
             <div className="text-center">
-              <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: '#FEFE5B' }}>
+              <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: 'rgb(var(--accent))' }}>
                 My Diary
               </h3>
               <StackedCards
@@ -214,7 +213,7 @@ const MovieSection = () => {
 
             {/* My 5 Star Movies */}
             <div className="text-center">
-              <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: '#FEFE5B' }}>
+              <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: 'rgb(var(--accent))' }}>
                 My 5 Star Movies
               </h3>
               <StackedCards
@@ -234,7 +233,7 @@ const MovieSection = () => {
 
             {/* Watch a Movie */}
             <div className="text-center">
-              <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: '#FEFE5B' }}>
+              <h3 className="text-responsive-lg font-semibold mb-6" style={{ color: 'rgb(var(--accent))' }}>
                 Random Movie
               </h3>
               {(movieData.randomMovie.success && movieData.randomMovie.data) || animationMovie ? (
@@ -268,7 +267,7 @@ const MovieSection = () => {
                       disabled={isAnimating}
                       className={`w-full py-2 px-4 rounded-lg transition-all duration-300 font-medium text-sm ${isAnimating
                         ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                        : 'bg-yellow-400 text-black hover:bg-yellow-300'
+                        : 'bg-accent text-white hover:bg-accent/80'
                         }`}
                     >
                       {isAnimating ? 'Picking...' : 'Again!'}
@@ -293,7 +292,7 @@ const MovieSection = () => {
 
               {/* My Lists */}
               <div className="mt-8">
-                <h4 className="text-responsive-md font-semibold mb-4" style={{ color: '#FEFE5B' }}>
+                <h4 className="text-responsive-md font-semibold mb-4" style={{ color: 'rgb(var(--accent))' }}>
                   My Lists
                 </h4>
                 <div className="flex flex-wrap justify-center gap-2">
@@ -303,7 +302,7 @@ const MovieSection = () => {
                       href={list.letterboxdUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1 bg-white/10 text-white rounded-full text-sm hover:bg-yellow-400 hover:text-black transition-all duration-300"
+                      className="px-3 py-1 bg-white/10 text-white rounded-full text-sm hover:bg-accent hover:text-white transition-all duration-300"
                     >
                       {list.name}
                     </a>
@@ -321,7 +320,7 @@ const MovieSection = () => {
               <div className="flex flex-col items-center flex-1">
                 {/* Title */}
                 <div className="h-8 flex items-end mb-4">
-                  <h3 className="text-responsive-md font-semibold" style={{ color: '#FEFE5B' }}>
+                  <h3 className="text-responsive-md font-semibold" style={{ color: 'rgb(var(--accent))' }}>
                     My Diary
                   </h3>
                 </div>
@@ -349,7 +348,7 @@ const MovieSection = () => {
               <div className="flex flex-col items-center flex-1">
                 {/* Title */}
                 <div className="h-8 flex items-end mb-4">
-                  <h3 className="text-responsive-md font-semibold" style={{ color: '#FEFE5B' }}>
+                  <h3 className="text-responsive-md font-semibold" style={{ color: 'rgb(var(--accent))' }}>
                     My 5 Star Movies
                   </h3>
                 </div>
@@ -378,7 +377,7 @@ const MovieSection = () => {
               <div className="flex flex-col items-center flex-1">
                 {/* Title */}
                 <div className="h-8 flex items-end mb-4">
-                  <h3 className="text-responsive-md font-semibold" style={{ color: '#FEFE5B' }}>
+                  <h3 className="text-responsive-md font-semibold" style={{ color: 'rgb(var(--accent))' }}>
                     Random Movie
                   </h3>
                 </div>
@@ -417,7 +416,7 @@ const MovieSection = () => {
                             disabled={isAnimating}
                             className={`w-full py-2 px-4 rounded-lg transition-all duration-300 font-medium text-sm ${isAnimating
                               ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                              : 'bg-yellow-400 text-black hover:bg-yellow-300'
+                              : 'bg-accent text-white hover:bg-accent/80'
                               }`}
                           >
                             {isAnimating ? 'Picking...' : 'Again!'}
@@ -447,7 +446,7 @@ const MovieSection = () => {
             {/* My Lists - BOTTOM SECTION */}
             <div className="text-center">
               <div className="mb-6">
-                <h3 className="text-responsive-md font-semibold" style={{ color: '#FEFE5B' }}>
+                <h3 className="text-responsive-md font-semibold" style={{ color: 'rgb(var(--accent))' }}>
                   My Lists
                 </h3>
               </div>
@@ -458,7 +457,7 @@ const MovieSection = () => {
                     href={list.letterboxdUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 bg-white/10 text-white rounded-lg text-sm hover:bg-yellow-400 hover:text-black transition-all duration-300 whitespace-nowrap"
+                    className="px-3 py-1.5 bg-white/10 text-white rounded-lg text-sm hover:bg-accent hover:text-white transition-all duration-300 whitespace-nowrap"
                   >
                     {list.name}
                   </a>

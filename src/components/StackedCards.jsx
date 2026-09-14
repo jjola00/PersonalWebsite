@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import StarRating from './StarRating';
 
@@ -42,7 +42,7 @@ const StackedCards = ({
     // Add initial delay of 8 seconds before starting auto-rotation
     const initialDelay = setTimeout(() => {
       interval = setInterval(() => {
-        nextCard();
+        nextCardRef.current();
       }, autoRotateInterval);
     }, 8000); // 8 second initial delay
 
@@ -61,6 +61,8 @@ const StackedCards = ({
 
     setTimeout(() => setIsAnimating(false), 300);
   };
+  const nextCardRef = useRef(nextCard);
+  nextCardRef.current = nextCard;
 
   // Navigate to previous card
   const previousCard = () => {
@@ -206,7 +208,7 @@ const StackedCards = ({
                     height={360}
                     className={`
                       rounded-lg shadow-lg object-cover
-                      ${isMainCard ? 'shadow-2xl border-2 border-yellow-400/30' : 'shadow-xl'}
+                      ${isMainCard ? 'shadow-2xl border-2 border-accent/30' : 'shadow-xl'}
                       transition-all duration-300
                     `}
                     style={{
@@ -219,7 +221,7 @@ const StackedCards = ({
                   <div
                     className={`
                       bg-gray-700 rounded-lg flex items-center justify-center shadow-lg
-                      ${isMainCard ? 'shadow-2xl border-2 border-yellow-400/30' : 'shadow-xl'}
+                      ${isMainCard ? 'shadow-2xl border-2 border-accent/30' : 'shadow-xl'}
                     `}
                     style={{
                       width: responsiveWidth || posterWidth,
@@ -232,7 +234,7 @@ const StackedCards = ({
 
                 {/* Ranking Number - Only show for main card and if item has order property */}
                 {isMainCard && typeof item.order === 'number' && (
-                  <div className="absolute bottom-2 right-2 bg-black/70 text-yellow-400 text-sm font-bold px-2 py-1 rounded-md">
+                  <div className="absolute bottom-2 right-2 bg-black/70 text-accent text-sm font-bold px-2 py-1 rounded-md">
                     {item.order + 1}
                   </div>
                 )}
@@ -275,9 +277,9 @@ const StackedCards = ({
                 absolute -left-16 top-1/2 -translate-y-1/2 z-20
                 sm:-left-16 left-12 sm:top-1/2 top-34
                 w-12 h-12 text-white flex items-center justify-center
-                bg-black/40 hover:bg-yellow-400 hover:text-black
+                bg-black/40 hover:bg-accent hover:text-white
                 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed
-                focus:outline-none focus:ring-2 focus:ring-yellow-400/50
+                focus:outline-none focus:ring-2 focus:ring-accent/50
                 rounded-full
               "
               aria-label="Previous movie"
@@ -295,9 +297,9 @@ const StackedCards = ({
                 absolute -right-16 top-1/2 -translate-y-1/2 z-20
                 sm:-right-16 right-12 sm:top-1/2 top-34
                 w-12 h-12 text-white flex items-center justify-center
-                bg-black/40 hover:bg-yellow-400 hover:text-black
+                bg-black/40 hover:bg-accent hover:text-white
                 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed
-                focus:outline-none focus:ring-2 focus:ring-yellow-400/50
+                focus:outline-none focus:ring-2 focus:ring-accent/50
                 rounded-full
               "
               aria-label="Next movie"
@@ -344,7 +346,7 @@ const StackedCards = ({
                   WebkitBoxOrient: 'vertical',
                   textOverflow: 'ellipsis'
                 }}>
-                "{items[currentIndex].review}"
+                &ldquo;{items[currentIndex].review}&rdquo;
               </p>
             </div>
           )}

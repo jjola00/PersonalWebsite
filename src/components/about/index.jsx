@@ -54,7 +54,7 @@ const companyLogos = [
 const topLanguages = [
   { name: 'Python', percentage: 43.12, color: '#3B82F6' },
   { name: 'TypeScript', percentage: 23.08, color: '#1D4ED8' },
-  { name: 'JavaScript', percentage: 13.89, color: '#FEFE5B' },
+  { name: 'JavaScript', percentage: 13.89, color: 'rgb(var(--accent))' },
   { name: 'C++', percentage: 5.76, color: '#F43F7D' },
   { name: 'HTML', percentage: 4.61, color: '#F97316' },
   { name: 'CSS', percentage: 3.86, color: '#7E22CE' },
@@ -95,11 +95,11 @@ const AboutDetails = () => {
             " col-span-full lg:col-span-8 row-span-2 flex-col items-start"
           }
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold" style={{color: '#FEFE5B'}}>
-            Software Developer @ ISE
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold" style={{ color: 'rgb(var(--accent))' }}>
+            Software Engineer @ ISE
           </h2>
           <p className="font-light text-xs sm:text-sm md:text-base">
-            I’m a software developer with experience across full-stack engineering and early-stage product building. I’ve worked with technologies like React, TypeScript, Node.js, Java, and Python, building everything from multiplayer web apps to AI-driven tools. I enjoy turning ideas into real products, whether that’s creating Puzz, an online party game platform, or building StableWise, a show-horse marketplace MVP powered by data scraping and AI summaries.
+            I have experience across full-stack engineering and early-stage product building. I’ve worked with technologies like React, TypeScript, Node.js, Java, and Python, building everything from multiplayer web apps to AI-driven tools. I enjoy turning ideas into real products, whether that’s creating Puzz, an online party game platform, or building StableWise, a show-horse marketplace MVP powered by data scraping and AI summaries.
           </p>
           <p className="font-light mt-2 text-xs sm:text-sm md:text-base">
             I’ve gained practical experience through roles at DevEire, Dogpatch Labs, Patch, and Talio, where I contributed to frontend development, backend features, automation tools and early product direction. I focus on usability, performance and delivering features that make an impact.
@@ -109,7 +109,7 @@ const AboutDetails = () => {
         <ItemLayout
           className={" col-span-full xs:col-span-6 lg:col-span-4 text-white"}
         >
-          <p className="font-semibold w-full text-left text-2xl sm:text-5xl" style={{color: '#FEFE5B'}}>
+          <p className="font-semibold w-full text-left text-2xl sm:text-5xl" style={{ color: 'rgb(var(--accent))' }}>
             8+ <sub className="font-semibold text-base" style={{color: 'white'}}>technologies</sub>
           </p>
         </ItemLayout>
@@ -117,7 +117,7 @@ const AboutDetails = () => {
         <ItemLayout
           className={"col-span-full xs:col-span-6 lg:col-span-4 text-white"}
         >
-          <p className="font-semibold w-full text-left text-2xl sm:text-5xl" style={{color: '#FEFE5B'}}>
+          <p className="font-semibold w-full text-left text-2xl sm:text-5xl" style={{ color: 'rgb(var(--accent))' }}>
             1+{" "}
             <sub className="font-semibold text-base" style={{color: 'white'}}>year of experience</sub>
           </p>
@@ -157,7 +157,7 @@ const AboutDetails = () => {
             <a href={`https://github.com/jjola00/${pin.repo}`} target="_blank" rel="noopener noreferrer" className="w-full">
               <Image
                 className="w-full h-auto hover:opacity-80 transition-opacity"
-                src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/pin/?username=jjola00&repo=${pin.repo}&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B`}
+                src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api/pin/?username=jjola00&repo=${pin.repo}&theme=transparent&hide_border=true&title_color=E3242B&text_color=FFFFFF&icon_color=E3242B`}
                 alt={pin.alt}
                 width={400}
                 height={150}
@@ -171,7 +171,7 @@ const AboutDetails = () => {
         <ItemLayout className={"col-span-full md:col-span-7 !p-0 items-start justify-start self-start"}>
           <Image
             className="w-full h-auto"
-            src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api?username=jjola00&theme=transparent&hide_border=true&title_color=FEFE5B&text_color=FFFFFF&icon_color=FEFE5B&show_icons=true&rank_icon=github`}
+            src={`${process.env.NEXT_PUBLIC_GITHUB_STATS_URL}/api?username=jjola00&theme=transparent&hide_border=true&title_color=E3242B&text_color=FFFFFF&icon_color=E3242B&show_icons=true&rank_icon=github`}
             alt="GitHub Stats"
             width={500}
             height={200}
@@ -182,7 +182,7 @@ const AboutDetails = () => {
 
         <ItemLayout className={"col-span-full md:col-span-5 !p-5 sm:!p-6 items-start justify-start overflow-hidden self-stretch h-full"}>
           <div className="w-full h-full flex flex-col gap-4">
-            <h3 className="text-2xl sm:text-4xl font-semibold leading-tight" style={{ color: '#FEFE5B' }}>
+            <h3 className="text-2xl sm:text-4xl font-semibold leading-tight" style={{ color: 'rgb(var(--accent))' }}>
               Most Used Languages
             </h3>
 
@@ -224,7 +224,7 @@ const AboutDetails = () => {
 
         <ItemLayout className={"col-span-full"}>
           <div className="space-y-6 w-full">
-            <h2 className="text-responsive-xl font-semibold text-center md:text-left" style={{color: '#FEFE5B'}}>
+            <h2 className="text-responsive-xl font-semibold text-center md:text-left" style={{ color: 'rgb(var(--accent))' }}>
               Projects
             </h2>
             <div className="h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto glass-scrollbar pr-1 md:pr-2">

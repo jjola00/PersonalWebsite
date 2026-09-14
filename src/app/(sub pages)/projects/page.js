@@ -126,24 +126,6 @@ const ensureProjectProperties = (project) => {
   return requiredProperties;
 };
 
-/**
- * Helper function to separate featured project from other projects with validation
- */
-const separateProjectsByFeatured = (projects) => {
-  if (!Array.isArray(projects)) {
-    console.warn('Projects is not an array:', projects);
-    return { featured: null, others: [] };
-  }
-
-  const featuredProject = projects.find(project => project && project.title === "Beetlehead Designs");
-  const others = projects.filter(project => project && project.title !== "Beetlehead Designs");
-
-  return {
-    featured: featuredProject || null,
-    others: others || []
-  };
-};
-
 export default function Projects() {
   const { mode, ambientEffect } = useBackground();
 
@@ -197,15 +179,6 @@ export default function Projects() {
   // Process all projects with error handling
   const { featured: adaptedFeaturedProject, others: adaptedOtherProjects } = processProjects();
 
-  // Log processing results for debugging
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Projects processing results:', {
-      featuredProject: adaptedFeaturedProject?.title || 'None',
-      otherProjectsCount: adaptedOtherProjects.length,
-      otherProjects: adaptedOtherProjects.map(p => p.title)
-    });
-  }
-
   return (
     <>
       {/* Dynamic Background System */}
@@ -224,7 +197,7 @@ export default function Projects() {
             My Projects
           </h1>
           <p className="text-center font-light text-sm xs:text-base max-w-2xl">
-            Some of the projects I've worked on
+            Some of the projects I&apos;ve worked on
           </p>
         </div>
 

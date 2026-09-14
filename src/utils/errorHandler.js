@@ -57,9 +57,7 @@ class ErrorHandler {
   logError(errorData) {
     // In development, log to console
     if (process.env.NODE_ENV === 'development') {
-      console.group('🚨 Global Error Handler');
-      console.error('Error Data:', errorData);
-      console.groupEnd();
+      console.error('🚨 Global Error Handler:', errorData);
     }
 
     // In production, send to error reporting service
