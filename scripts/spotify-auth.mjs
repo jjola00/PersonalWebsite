@@ -109,7 +109,7 @@ const server = createServer(async (req, res) => {
 
     console.log('\n✓ New refresh token written to .env:\n');
     console.log(`  SPOTIFY_REFRESH_TOKEN=${tokens.refresh_token}\n`);
-    console.log('Set the same value in your Netlify site env vars, then redeploy.\n');
+    console.log('Update SPOTIFY_REFRESH_TOKEN in your Vercel project env vars, then redeploy.\n');
   } catch (err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' }).end(String(err));
     console.error(`\n✗ Token exchange failed: ${err.message}`);

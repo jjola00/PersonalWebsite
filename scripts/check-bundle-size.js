@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /**
  * Bundle size checker
- * Measures the built client bundle and compares it against the budgets in
+ * Measures the built client bundle (gzipped, i.e. what visitors download) and
+ * compares it against the budgets in
  * performance.config.js. Exits non-zero when a budget is exceeded so it can
  * gate CI; warns at the configured warning threshold.
  */
 
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 
 const config = require('../performance.config.js');
 
@@ -73,8 +75,15 @@ function checkBundleSize() {
     return { ok: false, results: [], totalJs: null };
   }
 
-  const jsFiles = collectFiles(STATIC_DIR, (f) => f.endsWith('.js'));
-  const cssFiles = collectFiles(STATIC_DIR, (f) => f.endsWith('.css'));
+  // Budgets are about transfer size, so measure gzipped bytes. Polyfills are
+  // excluded: Next serves them only to legacy browsers (nomodule).
+  const gzipped = (files) =>
+    files.map((f) => ({ ...f, size: zlib.gzipSync(fs.readFileSync(f.path)).length }));
+
+  const jsFiles = gzipped(
+    collectFiles(STATIC_DIR, (f) => f.endsWith('.js') && !path.basename(f).startsWith('polyfills-'))
+  );
+  const cssFiles = gzipped(collectFiles(STATIC_DIR, (f) => f.endsWith('.css')));
   const vendorFiles = jsFiles.filter((f) => /vendors?[-.]/.test(path.basename(f.path)));
 
   const totalJs = sum(jsFiles);
@@ -91,7 +100,7 @@ function checkBundleSize() {
   ];
 
   const icons = { ok: '✓', warn: '!', over: '✗' };
-  console.log('\nBundle size vs. budget (performance.config.js)\n');
+  console.log('\nBundle size, gzipped, vs. budget (performance.config.js)\n');
   for (const r of results) {
     console.log(
       `  ${icons[r.status]} ${r.name.padEnd(18)} ${formatBytes(r.size).padStart(10)}` +

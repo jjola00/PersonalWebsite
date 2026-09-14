@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { readLetterboxdFile } from '@/utils/letterboxdData';
 
 export async function GET(request) {
   try {
@@ -9,14 +8,12 @@ export async function GET(request) {
     const featured = searchParams.get('featured') === 'true'; // Get only featured lists (with topstats tag)
 
     // Read the lists metadata file
-    const metadataPath = path.join(process.cwd(), 'lists-metadata.json');
-    
     let metadataData;
     try {
-      metadataData = await fs.readFile(metadataPath, 'utf-8');
+      metadataData = await readLetterboxdFile('lists-metadata.json');
     } catch (error) {
       return NextResponse.json(
-        { error: 'Lists metadata file not found. Make sure lists-metadata.json exists in the project root.' },
+        { error: 'Lists metadata file not found. Make sure lists-metadata.json exists in src/data/letterboxd/.' },
         { status: 404 }
       );
     }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { getCurrentlyPlaying, getUserProfile, getTopArtists as getSpotifyTopArtists, getTopTracks as getSpotifyTopTracks } from '@/services/spotify';
+import { getSpotifyMusicData } from '@/services/spotify';
 import { getCurrentTrack, getTopArtists as getLastfmTopArtists, getTopTracks as getLastfmTopTracks, fetchLastFmData } from '@/services/lastfm';
 import { useMobileNavigation } from '@/contexts/MobileNavigationContext';
 import { getCached, setCache } from '@/utils/cache';
@@ -59,12 +59,12 @@ const MusicSection = () => {
 
     setLoading(true);
     try {
-      const [spotifyTrack, profile, spotifyArtists, spotifyTracks] = await Promise.all([
-        getCurrentlyPlaying(),
-        getUserProfile(),
-        getSpotifyTopArtists('medium_term', 15),
-        getSpotifyTopTracks('medium_term', 15)
-      ]);
+      const {
+        currentTrack: spotifyTrack,
+        profile,
+        topArtists: spotifyArtists,
+        topTracks: spotifyTracks
+      } = await getSpotifyMusicData();
 
       let displayTrack = spotifyTrack;
       if (!spotifyTrack) {

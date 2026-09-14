@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { readLetterboxdFile } from '@/utils/letterboxdData';
 
 /**
  * Parse CSV data into movie objects
@@ -55,15 +54,13 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit')) || 12; // Default to all 12 movies
 
-    // Read the CSV file from the project root
-    const csvPath = path.join(process.cwd(), 'five-star-movies.csv');
-    
+    // Read the CSV file from src/data/letterboxd/
     let csvData;
     try {
-      csvData = await fs.readFile(csvPath, 'utf-8');
+      csvData = await readLetterboxdFile('five-star-movies.csv');
     } catch (error) {
       return NextResponse.json(
-        { error: 'Five-star movies CSV file not found. Make sure five-star-movies.csv exists in the project root.' },
+        { error: 'Five-star movies CSV file not found. Make sure five-star-movies.csv exists in src/data/letterboxd/.' },
         { status: 404 }
       );
     }

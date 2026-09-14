@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { readLetterboxdFile } from '@/utils/letterboxdData';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -124,15 +123,13 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit')) || 8;
     const random = searchParams.get('random') === 'true';
 
-    // Read the CSV file from the project root
-    const csvPath = path.join(process.cwd(), 'watchlist.csv');
-    
+    // Read the CSV file from src/data/letterboxd/
     let csvData;
     try {
-      csvData = await fs.readFile(csvPath, 'utf-8');
+      csvData = await readLetterboxdFile('watchlist.csv');
     } catch (error) {
       return NextResponse.json(
-        { error: 'Watchlist CSV file not found. Make sure watchlist.csv exists in the project root.' },
+        { error: 'Watchlist CSV file not found. Make sure watchlist.csv exists in src/data/letterboxd/.' },
         { status: 404 }
       );
     }

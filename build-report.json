@@ -1,20 +1,16 @@
 {
-  "startTime": 1789379005907,
-  "endTime": 1789379056697,
-  "duration": 50790,
-  "success": false,
-  "bundleSize": 1047208,
-  "errors": [
-    "Total JavaScript 1022.7 KB exceeds budget 500.0 KB.",
-    "Vendor chunks 813.1 KB exceeds budget 300.0 KB.",
-    "App code 209.5 KB exceeds budget 200.0 KB."
-  ],
+  "startTime": 1789380256710,
+  "endTime": 1789380278690,
+  "duration": 21980,
+  "success": true,
+  "bundleSize": 285380,
+  "errors": [],
   "warnings": [
-    "CSS at 91% of its budget."
+    "Vendor chunks at 82% of its budget."
   ],
   "performance": {
-    "staticAssetsSize": 295878820
+    "staticAssetsSize": 295875724
   },
-  "durationFormatted": "50.79s",
-  "timestamp": "2026-09-14T09:44:16.697Z"
+  "durationFormatted": "21.98s",
+  "timestamp": "2026-09-14T10:04:38.690Z"
 }
