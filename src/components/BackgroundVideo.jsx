@@ -4,6 +4,16 @@ import { useState, useEffect, useRef, useImperativeHandle, forwardRef, useCallba
 import { useBackground } from './BackgroundManager';
 import { getCurrentWallpaper, getWallpaperCount } from '@/utils/wallpaperManager';
 
+// --- Wallpaper brightness -----------------------------------------------
+// The video composites over the near-black page background (--background:
+// 27 27 27), so opacity is effectively a dimmer: 0 is fully dark, 1 is the
+// video at full strength. BRIGHTNESS lifts the video's own pixels before
+// that blend. Raise either to make wallpapers brighter.
+// Past ~0.6 opacity the nav icons and profile image start losing contrast.
+const WALLPAPER_OPACITY = 0.45;
+const WALLPAPER_BRIGHTNESS = 1.15;
+// ------------------------------------------------------------------------
+
 const BackgroundVideo = forwardRef((props, ref) => {
   const { mode, customVideoIndex, nextVideo } = useBackground();
   const [activeVideo, setActiveVideo] = useState(0); // 0 or 1 for dual videos
@@ -147,11 +157,14 @@ const BackgroundVideo = forwardRef((props, ref) => {
     <>
       <video
         ref={video1Ref}
-        className={`
+        className="
           fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
           transition-opacity duration-300 ease-in-out
-          ${isCustom && activeVideo === 0 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
-        `}
+        "
+        style={{
+          opacity: isCustom && activeVideo === 0 && !isTransitioning ? WALLPAPER_OPACITY : 0,
+          filter: `brightness(${WALLPAPER_BRIGHTNESS})`,
+        }}
         loop
         muted
         playsInline
@@ -159,11 +172,14 @@ const BackgroundVideo = forwardRef((props, ref) => {
       />
       <video
         ref={video2Ref}
-        className={`
+        className="
           fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
           transition-opacity duration-300 ease-in-out
-          ${isCustom && activeVideo === 1 && !isTransitioning ? 'opacity-25' : 'opacity-0'}
-        `}
+        "
+        style={{
+          opacity: isCustom && activeVideo === 1 && !isTransitioning ? WALLPAPER_OPACITY : 0,
+          filter: `brightness(${WALLPAPER_BRIGHTNESS})`,
+        }}
         loop
         muted
         playsInline
