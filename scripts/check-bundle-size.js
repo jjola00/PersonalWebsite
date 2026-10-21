@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Bundle size checker
- * Measures the built client bundle (gzipped, i.e. what visitors download) and
- * compares it against the budgets in
+ * Measures the built client bundle (gzipped, i.e. what visitors download): all
+ * JS combined, the chunks every page shares, and each page's first load. It
+ * compares these against the budgets in
  * performance.config.js. Exits non-zero when a budget is exceeded so it can
  * gate CI; warns at the configured warning threshold.
  */
@@ -84,18 +85,41 @@ function checkBundleSize() {
     collectFiles(STATIC_DIR, (f) => f.endsWith('.js') && !path.basename(f).startsWith('polyfills-'))
   );
   const cssFiles = gzipped(collectFiles(STATIC_DIR, (f) => f.endsWith('.css')));
-  const vendorFiles = jsFiles.filter((f) => /vendors?[-.]/.test(path.basename(f.path)));
+  const gzSize = new Map(jsFiles.map((f) => [path.relative(path.join(ROOT, '.next'), f.path), f.size]));
+  const sizeOf = (chunks) => chunks.reduce((total, chunk) => total + (gzSize.get(chunk) || 0), 0);
+
+  // What a visitor actually downloads: the framework chunks every page shares,
+  // plus each page's own chunks and those of the layouts wrapping it.
+  const buildManifest = JSON.parse(fs.readFileSync(path.join(ROOT, '.next', 'build-manifest.json'), 'utf8'));
+  const appPages = JSON.parse(fs.readFileSync(path.join(ROOT, '.next', 'app-build-manifest.json'), 'utf8')).pages;
+  const sharedChunks = buildManifest.rootMainFiles;
+
+  const pageLoads = Object.keys(appPages)
+    .filter((entry) => entry.endsWith('/page') && entry !== '/_not-found/page')
+    .map((entry) => {
+      const segments = entry.split('/').slice(1, -1);
+      const layouts = segments
+        .map((_, i) => `/${segments.slice(0, i + 1).join('/')}/layout`)
+        .concat('/layout')
+        .filter((layout) => appPages[layout]);
+      const chunks = new Set(
+        [entry, ...layouts].flatMap((key) => appPages[key]).filter((chunk) => chunk.endsWith('.js'))
+      );
+      const route = entry.replace(/\/page$/, '').replace(/\/\([^)]*\)/g, '') || '/';
+      return { route, size: sizeOf([...chunks]) };
+    })
+    .sort((a, b) => b.size - a.size);
 
   const totalJs = sum(jsFiles);
-  const vendorJs = sum(vendorFiles);
-  const appJs = totalJs - vendorJs;
+  const sharedJs = sizeOf(sharedChunks);
+  const largestPage = pageLoads[0] || { route: '-', size: 0 };
   const totalCss = sum(cssFiles);
 
   const { bundleSize, assets } = config.budgets;
   const results = [
     evaluate('Total JavaScript', totalJs, bundleSize.total),
-    evaluate('Vendor chunks', vendorJs, bundleSize.vendor),
-    evaluate('App code', appJs, bundleSize.app),
+    evaluate('Shared by all', sharedJs, bundleSize.shared),
+    evaluate(`Largest page (${largestPage.route})`, largestPage.size, bundleSize.page),
     evaluate('CSS', totalCss, assets.css),
   ];
 
@@ -103,7 +127,7 @@ function checkBundleSize() {
   console.log('\nBundle size, gzipped, vs. budget (performance.config.js)\n');
   for (const r of results) {
     console.log(
-      `  ${icons[r.status]} ${r.name.padEnd(18)} ${formatBytes(r.size).padStart(10)}` +
+      `  ${icons[r.status]} ${r.name.padEnd(28)} ${formatBytes(r.size).padStart(10)}` +
         ` / ${formatBytes(r.budget).padStart(10)}  (${r.pct.toFixed(0)}%)`
     );
   }
@@ -119,7 +143,11 @@ function checkBundleSize() {
   } else {
     console.log('✓ All bundle budgets met.');
   }
-  console.log(`  ${jsFiles.length} JS file(s), ${cssFiles.length} CSS file(s) measured.\n`);
+  console.log('  First load per page:');
+  for (const page of pageLoads) {
+    console.log(`    ${page.route.padEnd(26)} ${formatBytes(page.size).padStart(10)}`);
+  }
+  console.log(`\n  ${jsFiles.length} JS file(s), ${cssFiles.length} CSS file(s) measured.\n`);
 
   return { ok: over.length === 0, results, totalJs };
 }

@@ -13,7 +13,7 @@ I'm a software developer with experience across full-stack engineering and early
 - **Interactive Animations**: Smooth animations and transitions using Framer Motion
 - **Music & Movie Integration**: Personal music and movie sections with Spotify and Letterboxd integration
 - **Responsive Design**: Fully optimized for all screen sizes and devices
-- **Performance Optimized**: Bundle size monitoring, lazy loading, and web vitals tracking
+- **Performance Optimized**: Per-page bundle budgets, lazy loading, and a persistent background that survives navigation
 - **Contact Form**: Integrated contact form using EmailJS
 
 ## Tech Stack
@@ -24,7 +24,7 @@ I'm a software developer with experience across full-stack engineering and early
 - **UI Components**: Lucide React icons
 - **Forms**: React Hook Form
 - **Email**: EmailJS
-- **Performance**: Web Vitals, Bundle Analyzer
+- **Performance**: Bundle Analyzer, per-page bundle budgets
 
 ## Installation
 

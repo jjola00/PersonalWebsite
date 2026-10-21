@@ -9,11 +9,8 @@ import {
     User,
   } from "lucide-react";
   import Link from "next/link";
-  import React from "react";
-  import { useResponsive } from "@/hooks/useResponsive";
-  import clsx from "clsx";
-  import { motion } from "framer-motion";
-  
+  import { m } from "framer-motion";
+
   const getIcon = (icon) => {
     switch (icon) {
       case "home":
@@ -32,19 +29,21 @@ import {
         return <Instagram className="w-full h-auto" strokeWidth={1.5} />;
       case "resume":
         return <NotebookText className="w-full h-auto" strokeWidth={1.5} />;
-  
+
       default:
         return <Home className="w-full h-auto" strokeWidth={1.5} />;
     }
   };
-  
+
   const item = {
     hidden: { scale: 0 },
     show: { scale: 1 },
   };
-  
-  const NavLink = motion(Link);
-  
+
+  const NavLink = m.create(Link);
+
+// `isMobile` picks the layout: a row in the slide-out mobile menu, or an icon
+// on the spinning desktop circle (positioned by x/y).
 const NavButton = ({
   x,
   y,
@@ -52,95 +51,55 @@ const NavButton = ({
   link,
   icon,
   newTab,
-  labelDirection = "right",
   isMobile = false,
 }) => {
-  const { isDesktop } = useResponsive();
-  const [isClient, setIsClient] = React.useState(false);
-  
-  React.useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  // Prevent hydration mismatch by not rendering responsive content until client-side
-  if (!isClient) {
+  if (isMobile) {
     return (
-      <div className="absolute cursor-pointer z-50" style={{ transform: `translate(${x}, ${y})` }}>
-        <div className="w-14 h-14 rounded-full bg-black/30 backdrop-blur-sm border border-white/30 animate-pulse" />
+      <div className="w-full cursor-pointer z-50">
+        <NavLink
+          variants={item}
+          href={link}
+          target={newTab ? "_blank" : "_self"}
+          className="text-foreground rounded-lg flex items-center justify-start gap-4 p-3 w-full focus-visible accessible-touch-target hover:bg-white/10 transition-colors"
+          aria-label={label}
+          name={label}
+          scroll={false}
+          rel={newTab ? "noopener noreferrer" : undefined}
+        >
+          <span className="flex items-center justify-center hover:text-blue-200 w-6 h-6">
+            {getIcon(icon)}
+          </span>
+          <span className="text-responsive-md font-medium">{label}</span>
+        </NavLink>
       </div>
     );
   }
-  
-  return (
-    <>
-      {isDesktop ? (
-          // Desktop/Tablet circular layout
-          <div
-            className="absolute cursor-pointer z-50"
-            style={{ transform: `translate(${x}, ${y})` }}
-          >
-            <NavLink
-              variants={item}
-              href={link}
-              target={newTab ? "_blank" : "_self"}
-              className="text-foreground rounded-full flex items-center justify-center custom-bg focus-visible"
-              aria-label={label}
-              name={label}
-              scroll={false}
-              rel={newTab ? "noopener noreferrer" : undefined}
-            >
-              <span className="relative w-14 h-14 p-4 animate-spin-slow-reverse group-hover:pause hover:text-blue-200">
-                {getIcon(icon)}
 
-                <span className="absolute px-2 py-1 left-full mx-2 top-1/2 -translate-y-1/2 bg-background text-foreground text-sm rounded-md shadow-lg whitespace-nowrap">
-                  {label}
-                </span>
-              </span>
-            </NavLink>
-          </div>
-        ) : (
-          // Mobile layout
-          <div className="w-full cursor-pointer z-50">
-            <NavLink
-              variants={item}
-              href={link}
-              target={newTab ? "_blank" : "_self"}
-              className={clsx(
-                "text-foreground rounded-lg flex items-center justify-start gap-4 p-3 w-full focus-visible accessible-touch-target",
-                isMobile ? "hover:bg-white/10 transition-colors" : "custom-bg rounded-full justify-center"
-              )}
-              aria-label={label}
-              name={label}
-              scroll={false}
-              rel={newTab ? "noopener noreferrer" : undefined}
-            >
-              <span className={clsx(
-                "flex items-center justify-center hover:text-blue-200",
-                isMobile ? "w-6 h-6" : "relative w-10 h-10 xs:w-14 xs:h-14 p-2.5 xs:p-4"
-              )}>
-                {getIcon(icon)}
-                
-                {!isMobile && (
-                  <>
-                    <span className="peer bg-transparent absolute top-0 left-0 w-full h-full" />
-                    <span
-                      className={clsx(
-                        "absolute hidden peer-hover:block px-2 py-1 left-full mx-2 top-1/2 -translate-y-1/2 bg-background text-foreground text-sm rounded-md shadow-lg whitespace-nowrap",
-                        labelDirection === "left" ? "right-full left-auto" : ""
-                      )}
-                    >
-                      {label}
-                    </span>
-                  </>
-                )}
-              </span>
-              
-              {isMobile && (
-                <span className="text-responsive-md font-medium">{label}</span>
-              )}
-            </NavLink>
-          </div>
-        )}
-    </>
+  return (
+    <div
+      className="absolute cursor-pointer z-50"
+      style={{ transform: `translate(${x}, ${y})` }}
+    >
+      <NavLink
+        variants={item}
+        href={link}
+        target={newTab ? "_blank" : "_self"}
+        className="text-foreground rounded-full flex items-center justify-center custom-bg focus-visible"
+        aria-label={label}
+        name={label}
+        scroll={false}
+        rel={newTab ? "noopener noreferrer" : undefined}
+      >
+        <span className="relative w-14 h-14 p-4 animate-spin-slow-reverse group-hover:pause hover:text-blue-200">
+          {getIcon(icon)}
+
+          <span className="absolute px-2 py-1 left-full mx-2 top-1/2 -translate-y-1/2 bg-background text-foreground text-sm rounded-md shadow-lg whitespace-nowrap">
+            {label}
+          </span>
+        </span>
+      </NavLink>
+    </div>
   );
-};  export default NavButton;
+};
+
+export default NavButton;

@@ -3,7 +3,6 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useBackground } from './BackgroundManager';
-import { useScreenSize } from '@/hooks/useResponsive';
 
 // Shared with the bottom effect picker so both control clusters read the same
 // against any wallpaper — neutral glass instead of per-button accent colours.
@@ -23,23 +22,22 @@ const CONTROL_CLASSES = `
 `;
 
 const BackgroundControls = () => {
-  const { 
-    mode, 
-    ambientEffect, 
-    switchToCustom, 
-    switchToAmbient, 
-    setEffect, 
-    nextVideo 
+  const {
+    mode,
+    ambientEffect,
+    customVideoIndex,
+    switchToCustom,
+    switchToAmbient,
+    setEffect,
+    nextVideo
   } = useBackground();
-  
-  const screenWidth = useScreenSize();
-  const isMobile = screenWidth <= 768; // Hide wallpapers on mobile devices (≤768px)
 
   // Sub pages render HomeBtn at `top-4 left-4` (see (sub pages)/layout.js), so the
   // controls shift right of it there. On the home page nothing else occupies the corner.
   const isHomePage = usePathname() === '/';
 
-  // Countdown timer for next wallpaper while in custom mode
+  // Countdown timer for next wallpaper while in custom mode. Restarts whenever
+  // the wallpaper changes, since BackgroundVideo restarts its rotation then too.
   const [secondsLeft, setSecondsLeft] = React.useState(60);
   React.useEffect(() => {
     if (mode !== 'custom') return;
@@ -51,7 +49,7 @@ const BackgroundControls = () => {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [mode]);
+  }, [mode, customVideoIndex]);
 
   const effects = [
     { id: 'pipeline', name: 'Pipeline' },
@@ -85,19 +83,17 @@ const BackgroundControls = () => {
         className={`fixed top-4 ${isHomePage ? 'left-4' : 'left-20'} z-40 flex flex-col sm:flex-row gap-2`}
       >
         {mode === 'ambient' ? (
-          // Hide "My Wallpapers" button on mobile devices (≤768px)
-          !isMobile && (
-            <div className={`${PANEL_CLASSES} p-2`}>
-              <button
-                onClick={switchToCustom}
-                className={CONTROL_CLASSES}
-                title="Use Custom Wallpapers"
-              >
-                {wallpaperIcon}
-                <span>My Wallpapers</span>
-              </button>
-            </div>
-          )
+          // Wallpapers are desktop-only: the videos are too heavy for mobile data
+          <div className={`${PANEL_CLASSES} p-2 hidden md:flex`}>
+            <button
+              onClick={switchToCustom}
+              className={CONTROL_CLASSES}
+              title="Use Custom Wallpapers"
+            >
+              {wallpaperIcon}
+              <span>My Wallpapers</span>
+            </button>
+          </div>
         ) : (
           <div className={`${PANEL_CLASSES} p-2`}>
             <button

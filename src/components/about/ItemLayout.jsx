@@ -1,10 +1,10 @@
 "use client";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import clsx from "clsx";
 
 const ItemLayout = ({ children, className }) => {
   return (
-    <motion.div
+    <m.div
       initial={{ scale: 0 }}
       whileInView={{ scale: 1 }}
       transition={{ duration: 0.5 }}
@@ -15,7 +15,7 @@ const ItemLayout = ({ children, className }) => {
       )}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 

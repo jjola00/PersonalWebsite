@@ -22,27 +22,29 @@ const WALLPAPERS = [
   '/wallpapers/DarknessDevil.mp4'
 ];
 
-// Singleton shuffled wallpapers instance
+// Shuffled once per page load (Fisher-Yates), then shared by every caller
 let shuffledWallpapers = null;
 
-export const getShuffledWallpapers = () => {
+const getShuffledWallpapers = () => {
   if (!shuffledWallpapers) {
-    shuffledWallpapers = [...WALLPAPERS].sort(() => Math.random() - 0.5);
+    shuffledWallpapers = [...WALLPAPERS];
+    for (let i = shuffledWallpapers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledWallpapers[i], shuffledWallpapers[j]] = [shuffledWallpapers[j], shuffledWallpapers[i]];
+    }
   }
   return shuffledWallpapers;
 };
 
 export const getCurrentWallpaper = (index) => {
   const wallpapers = getShuffledWallpapers();
-  return wallpapers[index % wallpapers.length];
+  return wallpapers.length ? wallpapers[index % wallpapers.length] : null;
 };
 
-export const getWallpaperCount = () => {
-  return WALLPAPERS.length;
-};
+export const getWallpaperCount = () => getShuffledWallpapers().length;
 
-// Reset shuffle (useful for testing or manual refresh)
-export const reshuffleWallpapers = () => {
-  shuffledWallpapers = [...WALLPAPERS].sort(() => Math.random() - 0.5);
-  return shuffledWallpapers;
+// Drop a wallpaper that failed to load for the rest of this visit. Everything
+// after it shifts down one slot, so the same index now points at the next one.
+export const markWallpaperBroken = (url) => {
+  shuffledWallpapers = getShuffledWallpapers().filter((wallpaper) => wallpaper !== url);
 };

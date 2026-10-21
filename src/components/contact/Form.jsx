@@ -1,9 +1,8 @@
 "use client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import emailjs from "@emailjs/browser";
 import { Toaster, toast } from "sonner";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 const container = {
   hidden: { opacity: 0 },
@@ -31,8 +30,9 @@ export default function Form() {
   const sendEmail = (params) => {
     const toastId = toast.loading("Sending your message, please wait...");
 
-    emailjs
-      .send(
+    // Loaded on submit rather than with the page; most visitors never send
+    import("@emailjs/browser")
+      .then(({ default: emailjs }) => emailjs.send(
         process.env.NEXT_PUBLIC_SERVICE_ID,
         process.env.NEXT_PUBLIC_TEMPLATE_ID,
         params,
@@ -42,7 +42,7 @@ export default function Form() {
             throttle: 5000, // you can not send more then 1 email per 5 seconds
           },
         }
-      )
+      ))
       .then(
         () => {
           toast.success(
@@ -79,14 +79,14 @@ export default function Form() {
   return (
     <>
       <Toaster richColors={true} />
-      <motion.form
+      <m.form
         variants={container}
         initial="hidden"
         animate="show"
         onSubmit={handleSubmit(onSubmit)}
         className="max-w-md w-full flex flex-col items-center justify-center space-y-4"
       >
-        <motion.input
+        <m.input
           variants={item}
           type="text"
           placeholder="Name"
@@ -104,7 +104,7 @@ export default function Form() {
             {errors.name.message}
           </span>
         )}
-        <motion.input
+        <m.input
           variants={item}
           type="email"
           placeholder="Email"
@@ -116,7 +116,7 @@ export default function Form() {
             {errors.email.message}
           </span>
         )}
-        <motion.textarea
+        <m.textarea
           variants={item}
           placeholder="Message"
           {...register("message", {
@@ -138,7 +138,7 @@ export default function Form() {
           </span>
         )}
 
-        <motion.input
+        <m.input
           variants={item}
           value="Send your message!"
           className="px-10 py-4 rounded-md shadow-lg bg-background border border-accent/30 border-solid
@@ -146,7 +146,7 @@ export default function Form() {
       "
           type="submit"
         />
-      </motion.form>
+      </m.form>
     </>
   );
 }

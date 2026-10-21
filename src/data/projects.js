@@ -9,7 +9,9 @@
  *   description: string,
  *   status: string, // "MVP" | "Completed" | "Ongoing" | "Pre-seed" | "On Hold" | "In Progress"
  *   imageUrl: string,
- *   demoLink: string
+ *   demoLink: string, // GitHub repo or live site
+ *   technologies: string[], // tags shown on the /projects cards
+ *   featured?: boolean // the one highlighted at the top of /projects
  * }
  */
 
@@ -22,6 +24,8 @@ export const projects = [
     status: "Completed",
     imageUrl: "/projects/beetlehead-demo.png",
     demoLink: "https://beetlehead-designs.vercel.app/",
+    technologies: ['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Sanity CMS', 'Framer Motion', 'EmailJS'],
+    featured: true,
   },
   {
     id: 2,
@@ -31,6 +35,7 @@ export const projects = [
     status: "MVP",
     imageUrl: "/projects/stablewise-demo.png",
     demoLink: "https://stablewise.org",
+    technologies: ['React', 'TypeScript', 'Supabase', 'API', 'AI-Powered Marketplace', 'Realtime'],
   },
   {
     id: 3,
@@ -40,6 +45,7 @@ export const projects = [
     status: "Completed",
     imageUrl: "/projects/aicoholics-demo.png",
     demoLink: "https://github.com/ISE-CS4445-AI/ai-project-aicoholics",
+    technologies: ['Python', 'PyTorch', 'Machine Learning', 'DenseNet', 'Data Preprocessing', 'Vehicle Classification'],
   },
   {
     id: 4,
@@ -49,6 +55,7 @@ export const projects = [
     status: "Completed",
     imageUrl: "/projects/ecosim-demo.png",
     demoLink: "https://github.com/darragh0/ecosim",
+    technologies: ['Java', 'Maven', 'Design Patterns', 'Game Dev', 'Environmental Simulation'],
   },
   {
     id: 5,
@@ -58,6 +65,7 @@ export const projects = [
     status: "MVP",
     imageUrl: "/projects/fuzzle-demo.jpg",
     demoLink: "https://github.com/jjola00/Fuzzle",
+    technologies: ['Flutter', 'Dart', 'React-Native', 'Mobile Dev', 'Cross-Platform', 'Productivity App'],
   },
   {
     id: 6,
@@ -67,6 +75,7 @@ export const projects = [
     status: "Completed",
     imageUrl: "/projects/zork-demo.png",
     demoLink: "https://github.com/jjola00/FinalZork",
+    technologies: ['C++', 'Qt', 'Game Dev', 'Text Adventure', 'C++ Fundamentals', 'Visual Novel'],
   },
   {
     id: 7,
@@ -76,36 +85,12 @@ export const projects = [
     status: "Ongoing",
     imageUrl: "/projects/leetcode-demo.png",
     demoLink: "https://github.com/jjola00/LeetCodeAdventures",
+    technologies: ['Python', 'LeetCode', 'Data Structures', 'Algorithms', 'Problem Solving', 'Coding Interview Prep'],
   },
 ];
 
-// Helper function to get featured project (Beetlehead Designs)
-export const getFeaturedProject = () => {
-  return projects.find(project => project.title === "Beetlehead Designs");
-};
+export const getFeaturedProject = () => projects.find((project) => project.featured);
 
-// Helper function to get all projects except the featured one
-export const getOtherProjects = () => {
-  return projects.filter(project => project.title !== "Beetlehead Designs");
-};
+export const getOtherProjects = () => projects.filter((project) => !project.featured);
 
-// Helper function to get all projects
-export const getAllProjects = () => {
-  return projects;
-};
-
-// Helper function to get projects by status
-export const getProjectsByStatus = (status) => {
-  return projects.filter(project => project.status.toLowerCase() === status.toLowerCase());
-};
-
-// Helper function to validate project data structure
-export const validateProject = (project) => {
-  const requiredFields = ['id', 'title', 'description', 'status', 'imageUrl', 'demoLink'];
-  return requiredFields.every(field => project && project[field] !== undefined && project[field] !== null);
-};
-
-// Helper function to get project by ID
-export const getProjectById = (id) => {
-  return projects.find(project => project.id === id);
-};
+export const getAllProjects = () => projects;

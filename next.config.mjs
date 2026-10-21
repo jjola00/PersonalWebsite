@@ -1,20 +1,11 @@
+import bundleAnalyzer from '@next/bundle-analyzer';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        dangerouslyAllowSVG: true,
+        // Hosts that next/image optimizes. GitHub stats and Spotify/Last.fm art
+        // render with `unoptimized`, so they don't need entries here.
         remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'github-readme-stats.vercel.app'
-            },
-            {
-                protocol: 'https',
-                hostname: 'skillicons.dev'
-            },
-            {
-                protocol: 'https',
-                hostname: 'github-readme-streak-stats.herokuapp.com'
-            },
             {
                 protocol: 'https',
                 hostname: 'image.tmdb.org'
@@ -23,16 +14,8 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'a.ltrbxd.com'
             },
-            {
-                protocol: 'https',
-                hostname: 'i.scdn.co'
-            },
-            {
-                protocol: 'https',
-                hostname: 'lastfm.freetls.fastly.net'
-            },
         ],
-        formats: ['image/webp', 'image/avif'],
+        formats: ['image/avif', 'image/webp'],
         minimumCacheTTL: 60,
         deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
@@ -46,6 +29,17 @@ const nextConfig = {
                     {
                         key: 'Cache-Control',
                         value: 'public, max-age=2592000, immutable'
+                    }
+                ]
+            },
+            {
+                // Ambient effect scripts load inside the background iframe on every
+                // visit. Not content-hashed, so keep the cache short-ish.
+                source: '/js/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=86400, stale-while-revalidate=604800'
                     }
                 ]
             },
@@ -97,90 +91,29 @@ const nextConfig = {
             }
         ];
     },
-    // Compiler optimizations for security and performance
     compiler: {
-        removeConsole: process.env.NODE_ENV === 'production',
-        reactRemoveProperties: process.env.NODE_ENV === 'production' ? { properties: ['^data-testid'] } : false,
-        styledComponents: true,
+        // Keep warnings and errors in production so failures (e.g. a broken
+        // wallpaper) still show up in the browser console.
+        removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
     },
-    // Enable experimental features for better performance
     experimental: {
+        // Rewrites barrel imports (e.g. `import { Home } from 'lucide-react'`) to
+        // per-module imports so only the icons and motion pieces in use ship.
         optimizePackageImports: [
             'lucide-react',
             'framer-motion',
-            'clsx'
         ],
-        // Optimize CSS loading - disabled due to build issues
-        // optimizeCss: true,
-        // Server Actions are enabled by default in Next.js 15+
     },
-
-    // External packages for server components
-    serverExternalPackages: [],
     // The Letterboxd API routes read these with fs at runtime; make sure they
     // are bundled into those functions on Vercel.
     outputFileTracingIncludes: {
         '/api/letterboxd/*': ['./src/data/letterboxd/**/*'],
     },
-    // Webpack optimizations
-    webpack: (config, { dev, isServer }) => {
-        // Production optimizations
-        if (!dev) {
-            config.optimization = {
-                ...config.optimization,
-                splitChunks: {
-                    chunks: 'all',
-                    cacheGroups: {
-                        vendor: {
-                            test: /[\\/]node_modules[\\/]/,
-                            name: 'vendors',
-                            chunks: 'all',
-                            priority: 10,
-                        },
-                        common: {
-                            name: 'common',
-                            minChunks: 2,
-                            chunks: 'all',
-                            priority: 5,
-                            reuseExistingChunk: true,
-                        },
-                        background: {
-                            test: /[\\/](AmbientBackground|BackgroundVideo|FireFliesBackground)[\\/]/,
-                            name: 'background',
-                            chunks: 'all',
-                            priority: 15,
-                        },
-                    },
-                },
-            };
-        }
-
-        // Tree shaking is handled by Next.js automatically
-
-        return config;
-    },
-    // Performance optimizations
     poweredByHeader: false,
-    compress: true,
-    generateEtags: true,
-    // Static optimization
-    trailingSlash: false,
-    // Production build optimizations
     productionBrowserSourceMaps: false,
-
-    // Enable build-time optimizations
-    modularizeImports: {
-        'lucide-react': {
-            transform: 'lucide-react/dist/esm/icons/{{member}}',
-            skipDefaultConversion: true
-        }
-    },
-
-    // Build performance
-    onDemandEntries: {
-        maxInactiveAge: 25 * 1000,
-        pagesBufferLength: 2,
-    }
 }
 
-export default nextConfig;
+// `npm run analyze` sets ANALYZE=true to open the bundle treemaps after building
+const withBundleAnalyzer = bundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
+
+export default withBundleAnalyzer(nextConfig);

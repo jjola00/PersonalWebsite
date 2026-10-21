@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useBackground } from './BackgroundManager';
-import { getCurrentWallpaper, getWallpaperCount } from '@/utils/wallpaperManager';
+import { getCurrentWallpaper, markWallpaperBroken } from '@/utils/wallpaperManager';
 
 // --- Wallpaper brightness -----------------------------------------------
 // The video composites over the near-black page background (--background:
@@ -14,46 +14,43 @@ const WALLPAPER_OPACITY = 0.45;
 const WALLPAPER_BRIGHTNESS = 1.15;
 // ------------------------------------------------------------------------
 
-const BackgroundVideo = forwardRef((props, ref) => {
-  const { mode, customVideoIndex, nextVideo } = useBackground();
+const ROTATE_INTERVAL_MS = 60000;
+
+// Only mounted in custom (wallpaper) mode; SiteBackground swaps it out for the
+// ambient effect otherwise. Two <video> slots crossfade: one plays the current
+// wallpaper while the other buffers the next. Nothing further ahead is
+// preloaded — the files are several MB each and rotate once a minute.
+const BackgroundVideo = () => {
+  const { customVideoIndex, nextVideo } = useBackground();
   const [activeVideo, setActiveVideo] = useState(0); // 0 or 1 for dual videos
   const [isTransitioning, setIsTransitioning] = useState(false);
+  // Bumped when a broken wallpaper is dropped, to re-read the list below
+  const [, setBrokenCount] = useState(0);
 
   const video1Ref = useRef(null);
   const video2Ref = useRef(null);
-  const intervalRef = useRef(null);
   const loadedSrcs = useRef([null, null]); // Track what URL is loaded on each slot
-  const preloadCache = useRef(new Set()); // URLs already preloaded into browser cache
 
   const currentVideoUrl = getCurrentWallpaper(customVideoIndex);
-  const nextVideoUrl = getCurrentWallpaper((customVideoIndex + 1) % getWallpaperCount());
-
-  // Preload a video into browser cache via a temporary video element
-  const preloadIntoCache = useCallback((url) => {
-    if (preloadCache.current.has(url)) return;
-    preloadCache.current.add(url); // Mark immediately to avoid duplicate requests
-
-    const video = document.createElement('video');
-    video.preload = 'auto';
-    video.muted = true;
-    video.playsInline = true;
-    video.src = url;
-    video.load();
-
-    const onReady = () => {
-      video.removeEventListener('canplaythrough', onReady);
-      video.src = '';
-      video.load(); // Release element memory, data stays in browser cache
-    };
-    video.addEventListener('canplaythrough', onReady);
-  }, []);
+  const nextVideoUrl = getCurrentWallpaper(customVideoIndex + 1);
 
   // Load a URL onto a video element only if it doesn't already have it
   const loadOnElement = useCallback((element, slot, url) => {
-    if (!element || loadedSrcs.current[slot] === url) return;
+    if (!element || !url || loadedSrcs.current[slot] === url) return;
     element.src = url;
     element.load();
     loadedSrcs.current[slot] = url;
+  }, []);
+
+  // A missing or corrupt file would otherwise leave a blank background until
+  // the next rotation. Drop it and let the load effect pick the next wallpaper.
+  const handleError = useCallback((slot) => {
+    const url = loadedSrcs.current[slot];
+    if (!url) return;
+    console.warn(`Wallpaper failed to load, skipping it: ${url}`);
+    loadedSrcs.current[slot] = null;
+    markWallpaperBroken(url);
+    setBrokenCount((count) => count + 1);
   }, []);
 
   // Smooth transition between videos
@@ -95,19 +92,14 @@ const BackgroundVideo = forwardRef((props, ref) => {
     }
   }, [activeVideo, nextVideo, isTransitioning, nextVideoUrl, loadOnElement]);
 
-  useImperativeHandle(ref, () => ({ switchToNext }));
-
-  // Auto-switch interval (only when in custom mode)
+  // Auto-switch interval
   useEffect(() => {
-    if (mode !== 'custom') return;
-    intervalRef.current = setInterval(switchToNext, 60000);
-    return () => clearInterval(intervalRef.current);
-  }, [switchToNext, mode]);
+    const interval = setInterval(switchToNext, ROTATE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [switchToNext]);
 
-  // Load current video + preload next when entering custom mode or index changes
+  // Load current video + buffer the next whenever the index changes
   useEffect(() => {
-    if (mode !== 'custom') return;
-
     const currentEl = activeVideo === 0 ? video1Ref.current : video2Ref.current;
     const nextEl = activeVideo === 0 ? video2Ref.current : video1Ref.current;
     const nextSlot = activeVideo === 0 ? 1 : 0;
@@ -116,79 +108,35 @@ const BackgroundVideo = forwardRef((props, ref) => {
     loadOnElement(currentEl, activeVideo, currentVideoUrl);
     if (currentEl) currentEl.play().catch(() => {});
 
-    // Preload next video onto the inactive element
+    // Buffer the next video on the inactive element
     loadOnElement(nextEl, nextSlot, nextVideoUrl);
-  }, [customVideoIndex, activeVideo, mode, currentVideoUrl, nextVideoUrl, loadOnElement]);
+  }, [activeVideo, currentVideoUrl, nextVideoUrl, loadOnElement]);
 
-  // Preload 2-3 videos ahead via hidden temporary elements
-  useEffect(() => {
-    if (mode !== 'custom') return;
+  const videoClassName = `
+    fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
+    transition-opacity duration-300 ease-in-out
+  `;
 
-    for (let i = 2; i <= 3; i++) {
-      const idx = (customVideoIndex + i) % getWallpaperCount();
-      preloadIntoCache(getCurrentWallpaper(idx));
-    }
-  }, [customVideoIndex, mode, preloadIntoCache]);
-
-  // When in ambient mode, preload the first wallpaper so switching to custom is instant
-  useEffect(() => {
-    if (mode === 'custom') return;
-
-    // Preload into browser cache
-    preloadIntoCache(currentVideoUrl);
-
-    // Also load directly onto video1 element so it's ready to play immediately
-    const el = video1Ref.current;
-    if (el) loadOnElement(el, 0, currentVideoUrl);
-  }, [mode, currentVideoUrl, preloadIntoCache, loadOnElement]);
-
-  // Pause videos when leaving custom mode to save resources
-  useEffect(() => {
-    if (mode !== 'custom') {
-      video1Ref.current?.pause();
-      video2Ref.current?.pause();
-    }
-  }, [mode]);
-
-  const isCustom = mode === 'custom';
-
-  // Always render video elements (never unmount) so they retain buffered data
   return (
     <>
-      <video
-        ref={video1Ref}
-        className="
-          fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
-          transition-opacity duration-300 ease-in-out
-        "
-        style={{
-          opacity: isCustom && activeVideo === 0 && !isTransitioning ? WALLPAPER_OPACITY : 0,
-          filter: `brightness(${WALLPAPER_BRIGHTNESS})`,
-        }}
-        loop
-        muted
-        playsInline
-        preload="auto"
-      />
-      <video
-        ref={video2Ref}
-        className="
-          fixed top-0 left-0 w-full h-full object-cover xl:left-1/2 xl:-translate-x-1/2 xl:w-auto xl:aspect-video -z-50
-          transition-opacity duration-300 ease-in-out
-        "
-        style={{
-          opacity: isCustom && activeVideo === 1 && !isTransitioning ? WALLPAPER_OPACITY : 0,
-          filter: `brightness(${WALLPAPER_BRIGHTNESS})`,
-        }}
-        loop
-        muted
-        playsInline
-        preload="auto"
-      />
+      {[video1Ref, video2Ref].map((videoRef, slot) => (
+        <video
+          key={slot}
+          ref={videoRef}
+          className={videoClassName}
+          style={{
+            opacity: activeVideo === slot && !isTransitioning ? WALLPAPER_OPACITY : 0,
+            filter: `brightness(${WALLPAPER_BRIGHTNESS})`,
+          }}
+          onError={() => handleError(slot)}
+          loop
+          muted
+          playsInline
+          preload="auto"
+        />
+      ))}
     </>
   );
-});
-
-BackgroundVideo.displayName = 'BackgroundVideo';
+};
 
 export default BackgroundVideo;

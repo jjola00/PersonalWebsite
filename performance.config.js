@@ -8,9 +8,9 @@ module.exports = {
   budgets: {
     // Bundle size limits (in bytes)
     bundleSize: {
-      total: 500 * 1024, // 500KB total JavaScript
-      vendor: 300 * 1024, // 300KB vendor chunks
-      app: 200 * 1024, // 200KB app code
+      total: 500 * 1024, // 500KB of JavaScript across the whole site
+      shared: 130 * 1024, // 130KB of framework/shared chunks every page loads
+      page: 200 * 1024, // 200KB first load for the heaviest page
     },
     
     // Asset size limits

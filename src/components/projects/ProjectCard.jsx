@@ -1,10 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ExternalLink, Github, Code2 } from "lucide-react";
 import Image from "next/image";
 
 const ProjectCard = ({ project, featured = false }) => {
+  // demoLink is either the repo or the live site; label the button to match
+  const isGithubLink = project.demoLink?.includes('github.com');
+  const githubUrl = isGithubLink ? project.demoLink : null;
+  const liveUrl = isGithubLink ? null : project.demoLink;
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -18,7 +23,7 @@ const ProjectCard = ({ project, featured = false }) => {
   };
 
   return (
-    <motion.div
+    <m.div
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
@@ -31,11 +36,13 @@ const ProjectCard = ({ project, featured = false }) => {
     >
       {/* Project Image */}
       <div className={`relative overflow-hidden ${featured ? 'h-80 sm:h-96 lg:h-[500px]' : 'h-48'}`}>
-        {project.image ? (
+        {project.imageUrl ? (
           <Image
-            src={project.image}
+            src={project.imageUrl}
             alt={project.title}
             fill
+            sizes={featured ? "(max-width: 896px) 100vw, 896px" : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"}
+            priority={featured}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => {
               e.target.style.display = 'none';
@@ -46,7 +53,7 @@ const ProjectCard = ({ project, featured = false }) => {
         {/* Fallback gradient background */}
         <div 
           className={`absolute inset-0 bg-gradient-to-br from-blue-600/30 to-purple-600/30 flex items-center justify-center ${
-            project.image ? 'hidden' : 'flex'
+            project.imageUrl ? 'hidden' : 'flex'
           }`}
         >
           <Code2 className="w-12 h-12 text-blue-200/50" />
@@ -102,9 +109,9 @@ const ProjectCard = ({ project, featured = false }) => {
 
         {/* Links */}
         <div className={`flex gap-3 ${featured ? 'pt-4' : 'pt-2'}`}>
-          {project.githubUrl && (
+          {githubUrl && (
             <a
-              href={project.githubUrl}
+              href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-white rounded-lg transition-all duration-200 border border-gray-600/30 hover:border-gray-500/50 ${
@@ -115,9 +122,9 @@ const ProjectCard = ({ project, featured = false }) => {
               Code
             </a>
           )}
-          {project.liveUrl && (
+          {liveUrl && (
             <a
-              href={project.liveUrl}
+              href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-200 hover:text-blue-100 rounded-lg transition-all duration-200 border border-blue-500/30 hover:border-blue-400/50 ${
@@ -130,7 +137,7 @@ const ProjectCard = ({ project, featured = false }) => {
           )}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

@@ -15,11 +15,3 @@ export function getCached(key) {
 export function setCache(key, data, ttl = DEFAULT_TTL) {
   cache.set(key, { data, expiry: Date.now() + ttl });
 }
-
-export function clearCache(key) {
-  if (key) {
-    cache.delete(key);
-  } else {
-    cache.clear();
-  }
-}

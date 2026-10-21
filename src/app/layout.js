@@ -3,11 +3,9 @@ import "./globals.css";
 import clsx from "clsx";
 import { BackgroundProvider } from "@/components/BackgroundManager";
 import { MobileNavigationProvider } from "@/contexts/MobileNavigationContext";
-import ClientFireFliesBackground from "@/components/ClientFireFliesBackground";
-import ClientWebVitalsTracker from "@/components/ClientWebVitalsTracker";
-
-// Import global error handler (initializes on import)
-import "@/utils/errorHandler";
+import SiteBackground from "@/components/SiteBackground";
+import MotionProvider from "@/components/MotionProvider";
+import FireFliesBackground from "@/components/FireFliesBackground";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -27,12 +25,15 @@ export const metadata = {
   },
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-      </head>
       <body
         className={clsx(
           ubuntu.variable,
@@ -41,9 +42,11 @@ export default function RootLayout({ children }) {
       >
         <MobileNavigationProvider>
           <BackgroundProvider>
-            {children}
-            <ClientFireFliesBackground />
-            <ClientWebVitalsTracker />
+            <MotionProvider>
+              <SiteBackground />
+              {children}
+              <FireFliesBackground />
+            </MotionProvider>
           </BackgroundProvider>
         </MobileNavigationProvider>
       </body>

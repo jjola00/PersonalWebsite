@@ -1,32 +1,9 @@
 import ItemLayout from "./ItemLayout";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import ProjectCard from "./ProjectCard";
-import { getAllProjects } from "../../data/projects";
-
-const MusicSection = dynamic(() => import("./MusicSection"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-96 flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-4xl mb-2">🎵</div>
-        <p className="text-gray-400 text-sm">Loading music...</p>
-      </div>
-    </div>
-  ),
-});
-
-const MovieSection = dynamic(() => import("./MovieSection"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-96 flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-4xl mb-2">🎬</div>
-        <p className="text-gray-400 text-sm">Loading movies...</p>
-      </div>
-    </div>
-  ),
-});
+import MusicSection from "./MusicSection";
+import MovieSection from "./MovieSection";
+import { getAllProjects } from "@/data/projects";
 
 // Technology logos data
 const technologyLogos = [
@@ -61,8 +38,6 @@ const topLanguages = [
   { name: 'C', percentage: 2.87, color: '#6B7280' },
   { name: 'Jupyter Notebook', percentage: 2.81, color: '#EA580C' }
 ];
-
-// Projects data is now imported from centralized data file
 
 const AboutDetails = () => {
   const projects = getAllProjects();

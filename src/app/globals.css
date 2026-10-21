@@ -46,28 +46,6 @@
     animation-play-state: paused;
   }
 
-  /* Custom scrollbar styles */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgb(var(--accent) / 0.5);
-    border-radius: 2px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--accent) / 0.7);
-  }
-
   .custom-bg {
     @apply bg-background/25 border border-white/30 border-solid backdrop-blur-[6px] shadow-glass-inset hover:shadow-glass-sm;
   }
@@ -94,20 +72,6 @@
 
 
 
-  /* Flexible layouts */
-  .flex-responsive {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  @media (max-width: 768px) {
-    .flex-responsive {
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-  }
-
   /* Responsive text utilities */
   .text-responsive-xl {
     font-size: clamp(1.5rem, 4vw, 3rem);
@@ -129,87 +93,6 @@
     line-height: 1.5;
   }
 
-  /* Phase 4: Responsive Images & Media */
-  .responsive-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .responsive-video {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-  }
-
-
-
-  /* Responsive background images */
-  .bg-responsive {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  @media (max-width: 768px) {
-    .bg-responsive {
-      background-size: contain;
-    }
-  }
-
-  /* Phase 4: Touch-Friendly Interactions */
-  .touch-target {
-    min-height: 44px;
-    min-width: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .touch-button {
-    min-height: 44px;
-    min-width: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .touch-button:hover {
-    transform: scale(1.02);
-  }
-
-  .touch-button:active {
-    transform: scale(0.98);
-  }
-
-  @media (max-width: 768px) {
-    .touch-button {
-      padding: 1rem 1.25rem;
-      font-size: 1rem;
-    }
-  }
-
-  /* Disable text selection on touch devices */
-  .no-select {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  /* Improve scroll performance on mobile */
-  .smooth-scroll {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
-
   /* Phase 4: Animation Optimization for Mobile */
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -219,13 +102,6 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
-  }
-
-  /* Optimize animations for mobile performance */
-  .mobile-optimized-animation {
-    will-change: transform;
-    transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
   @media (max-width: 768px) {
@@ -241,10 +117,6 @@
   /* Reduce motion on mobile devices with limited processing power */
   @media (max-width: 480px) {
     .animate-pulse {
-      animation: none;
-    }
-    
-    .complex-animation {
       animation: none;
     }
   }
@@ -264,23 +136,6 @@
     }
   }
 
-  /* Skip links for screen readers */
-  .skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: #000;
-    color: #fff;
-    padding: 8px;
-    text-decoration: none;
-    border-radius: 4px;
-    z-index: 9999;
-  }
-
-  .skip-link:focus {
-    top: 6px;
-  }
-
   /* Screen reader only content */
   .sr-only {
     position: absolute;
@@ -292,12 +147,6 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
-  }
-
-  /* Ensure sufficient color contrast */
-  .text-accessible {
-    color: #ffffff;
-    background-color: #000000;
   }
 
   /* Touch target sizing for accessibility */
@@ -400,48 +249,10 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
-}/* Carousel
- animations */
-@keyframes scroll-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes scroll-right {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-
-@keyframes fade-in-out {
-  0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  20% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-}
-
-.animate-scroll-left {
-  animation: scroll-left linear infinite;
-}
-
-.animate-scroll-right {
-  animation: scroll-right linear infinite;
-}
-
-.animate-fade-in-out {
-  animation: fade-in-out 2s ease-in-out;
-}
-
-.paused {
-  animation-play-state: paused;
 }
 
 /* Reduce animations on mobile for better performance */
 @media (max-width: 768px) {
-  .animate-scroll-left,
-  .animate-scroll-right {
-    animation-duration: 30s !important; /* Slower = less GPU work */
-  }
-
   .animate-float {
     animation-duration: 5s; /* Slower float */
   }

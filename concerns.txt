@@ -1,5 +1,5 @@
 CONCERNS BACKLOG
-Open items from the 2026-09-08 audit.
+Open items from the 2026-09-08 audit, updated 2026-10-21.
 
 --------------------------------------------------------------------------------
 1. GIT HISTORY REWRITE -- HANDLE SEPARATELY                        [ops / cost]
@@ -11,30 +11,28 @@ the now-deleted public/models and public/audio files.
 Plan when ready: run git filter-repo --strip-blobs-with-ids in a fresh clone (never
 in the working repo -- it resets the working tree), verify HEAD is unchanged, then
 force-push main. Destructive: rewrites every commit hash; any other clone must
-re-clone. Commit outstanding work first.
+re-clone. Commit outstanding work first. git-filter-repo is not installed yet.
+
+If item 2 goes ahead, do it first: the replaced wallpapers become old blobs that
+this same rewrite can strip.
 
 Decided: wallpapers stay in git. temp branch deleted (local + GitHub).
 
 --------------------------------------------------------------------------------
-2. /about SSRs ITS CONTROLS, THE OTHER PAGES DO NOT              [consistency]
+2. WALLPAPERS ARE ~5x LARGER THAN THEY NEED TO BE                [performance]
 --------------------------------------------------------------------------------
-src/app/(sub pages)/about/page.js:5 imports BackgroundControls directly.
-Home, contact and projects all use dynamic(..., { ssr: false }).
-useScreenSize() defaults to width 1200 during SSR, so /about server-renders the
-desktop layout and can flash on mobile. Pick one approach.
+public/wallpapers is 237 MB across 18 files (up to 44.7 MB each), H.264 at
+2-12 Mbps with AAC audio tracks that never play (videos are always muted), and
+not faststart-encoded (the moov index is at the end, so playback starts late).
+Test re-encode of DarknessDevil.mp4 (libx264 -preset slow -crf 27, -an,
++faststart): 44.7 MB -> 9.3 MB with no visible difference at 45% opacity.
+Waiting on a decision before replacing the files.
 
 --------------------------------------------------------------------------------
-3. THE ONE TEST CANNOT RUN                                         [testing]
+RESOLVED 2026-10-21
 --------------------------------------------------------------------------------
-src/components/__tests__/StarRating.test.js uses jest + @testing-library/react.
-Neither is in package.json. There is no `test` script.
-Either wire up a runner or drop the file.
-
---------------------------------------------------------------------------------
-4. BackgroundVideo HAS NO ERROR HANDLING                        [robustness]
---------------------------------------------------------------------------------
-src/components/BackgroundVideo.jsx
-No onError on either <video>. A missing or corrupt file shows an empty
-background for the full 60s rotation with no console signal -- which is exactly
-why the two broken wallpaper paths went unnoticed. An onError that skips to the
-next wallpaper would make this self-healing.
+- /about SSR'd its controls: the background + controls now render once from
+  SiteBackground in the root layout (client-only), shared by every page.
+- Untestable StarRating test: dropped (no runner; trivial presentational component).
+- BackgroundVideo error handling: onError drops the broken file and plays the
+  next one, with a console warning (warn/error now survive removeConsole).

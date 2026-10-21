@@ -1,9 +1,9 @@
 "use client";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Home } from "lucide-react";
 import Link from "next/link";
 
-const NavLink = motion(Link);
+const NavLink = m.create(Link);
 const HomeBtn = () => {
   return (
     <NavLink

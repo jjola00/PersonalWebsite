@@ -16,22 +16,13 @@ const StackedCards = ({
   maxVisibleCards = 4,
   onCardClick,
   className = "",
-  cardClassName = "",
   autoRotate = false,
   autoRotateInterval = 3000,
   posterSize = "medium", // "small", "medium", "large"
   titleSize = "medium", // "small", "medium", "large"
-  onCurrentMovieChange // callback to notify parent of current movie
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-
-  // Notify parent when current movie changes
-  useEffect(() => {
-    if (onCurrentMovieChange && items.length > 0) {
-      onCurrentMovieChange(items[currentIndex]);
-    }
-  }, [currentIndex, items, onCurrentMovieChange]);
 
   // Auto-rotate functionality
   useEffect(() => {
@@ -184,7 +175,6 @@ const StackedCards = ({
                 absolute cursor-pointer transition-all duration-300 ease-out
                 ${isMainCard ? 'hover:scale-105' : 'hover:scale-102'}
                 ${isAnimating ? 'transition-all duration-300' : ''}
-                ${cardClassName}
               `}
               style={{
                 zIndex,

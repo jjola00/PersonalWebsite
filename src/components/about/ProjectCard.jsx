@@ -31,10 +31,8 @@ const ProjectCard = ({ project }) => {
           src={project.imageUrl}
           alt={`${project.title} demo`}
           fill
+          sizes="(max-width: 768px) 100vw, 600px"
           className="object-cover transition-all duration-300 grayscale group-hover:grayscale-0 group-hover:scale-105"
-          onError={() => {
-            // Fallback handled by Next.js Image component
-          }}
         />
       </div>
 
