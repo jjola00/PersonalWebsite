@@ -151,7 +151,7 @@ function extractDiaryEntry(item) {
   const pubDate = item.pubDate || '';
   
   // Extract movie title and year from title
-  const movieMatch = title.match(/^(.+?)\s+(\d{4})(?:\s+★+)?/);
+  const movieMatch = title.match(/^(.+?),?\s+(\d{4})(?:\s+★+)?/);
   const movieTitle = movieMatch ? movieMatch[1].trim() : title;
   const movieYear = movieMatch ? parseInt(movieMatch[2]) : null;
   
@@ -233,7 +233,7 @@ function extractWatchlistItem(item) {
   const pubDate = item.pubDate || '';
   
   // Extract movie title and year
-  const movieMatch = title.match(/^(.+?)\s+(\d{4})/);
+  const movieMatch = title.match(/^(.+?),?\s+(\d{4})/);
   const movieTitle = movieMatch ? movieMatch[1].trim() : title;
   const movieYear = movieMatch ? parseInt(movieMatch[2]) : null;
   

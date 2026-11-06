@@ -1,22 +1,14 @@
-// Last.fm API service for fetching music data
+// Last.fm API service for fetching music data. Requests go through
+// /api/lastfm so the API key stays on the server.
 
-const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/';
-const API_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
-
-// Helper function to make API requests
+// Helper function to make API requests. The route fixes the user, so a `user`
+// param is accepted for readability but not sent.
 export const fetchLastFmData = async (method, params = {}) => {
-  const url = new URL(LASTFM_API_BASE);
-  url.searchParams.append('method', method);
-  url.searchParams.append('api_key', API_KEY);
-  url.searchParams.append('format', 'json');
-  
-  // Add additional parameters
-  Object.keys(params).forEach(key => {
-    url.searchParams.append(key, params[key]);
-  });
+  const query = new URLSearchParams({ method, ...params });
+  query.delete('user');
 
   try {
-    const response = await fetch(url.toString());
+    const response = await fetch(`/api/lastfm?${query}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

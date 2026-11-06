@@ -51,7 +51,9 @@ const nextConfig = {
                         key: 'Content-Security-Policy',
                         value: [
                             "default-src 'self'",
-                            "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Allow inline scripts for React and animations
+                            // Inline scripts are needed for Next's hydration data; eval only
+                            // for the dev server's fast refresh, not in production
+                            `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
                             "style-src 'self' 'unsafe-inline'", // Allow inline styles for Tailwind and components
                             "img-src 'self' data: https:", // Allow images from self, data URLs, and HTTPS
                             "font-src 'self' data:",
